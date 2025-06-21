@@ -74,6 +74,7 @@ const transformArmyUnitPosition = (rawData: any): ArmyUnitPosition | null => {
         army_id: getPrimitiveValue(armyUnitPositionData.army_id),
         unit_id: getPrimitiveValue(armyUnitPositionData.unit_id),
         position_index: getPrimitiveValue(armyUnitPositionData.position_index),
+        battlefield_id: getPrimitiveValue(armyUnitPositionData.battlefield_id),
     };
 };
 
@@ -106,6 +107,7 @@ const transformBattleField = (rawData: any): BattleField | null => {
         status: getPrimitiveValue(battleFieldData.status),
         current_turn: getPrimitiveValue(battleFieldData.current_turn),
         turn_deadline: getPrimitiveValue(battleFieldData.turn_deadline),
+        season: getPrimitiveValue(battleFieldData.season),
         created_at: getPrimitiveValue(battleFieldData.created_at),
         last_action_type: getPrimitiveValue(battleFieldData.last_action_type),
         last_action_timestamp: getPrimitiveValue(battleFieldData.last_action_timestamp),
@@ -206,6 +208,7 @@ export const useAllEntities = (pollInterval = 5000) => {
 
     const get_new_army_id = () => army_id;
 
+    console.log("------",army_id)
 
 
     const fetchAllEntities = async () => {

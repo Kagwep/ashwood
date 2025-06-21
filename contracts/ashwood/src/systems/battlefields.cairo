@@ -25,8 +25,7 @@ pub trait IBattleFields<T> {
         battlefield_id: u128,
         army_id: u8,
         unit_id: u128,
-        global_position: u8,
-        season: SeasonType
+        global_position: u8
     );
 
 }
@@ -116,6 +115,7 @@ pub mod battlefields {
                 invader_score: 0, // invader_score
                 current_turn: 1, // current_turn
                 turn_deadline: 0,
+                season: 1,
                 created_at: timestamp,
                 last_action_timestamp: timestamp
             );
@@ -164,8 +164,7 @@ pub mod battlefields {
             battlefield_id: u128,
             army_id: u8,
             unit_id: u128,
-            global_position: u8,
-            season: SeasonType
+            global_position: u8
         ) {
             let mut world = self.world_default();
             let player = get_caller_address();
@@ -182,10 +181,10 @@ pub mod battlefields {
 
             if battle.defender_commander_id == player{
                 assert(battle.defender_army_id == army.army_id, 'Army not created');
-                assert(global_position <= 27, 'Not Your territory');
+                assert((global_position >= 28 && global_position <= 54), 'Not Your territory');
             }else{
                 assert(battle.invader_army_id == army.army_id, 'Army not created');
-                assert((global_position >= 28 && global_position <= 54), 'Not Your territory');
+                assert(global_position <= 27, 'Not Your territory');
             }
             
             // Verify unit exists
@@ -199,6 +198,8 @@ pub mod battlefields {
             }else {
                 assert(battlefield_stats.invader_units_deployed <= 18, 'Max Units Deployed');
             }
+
+            let season: SeasonType  = self.get_season(battle.season);
 
             
             // Validate position for current season
@@ -226,7 +227,7 @@ pub mod battlefields {
 
 
             // Deploy unit using ArmyUnitPosition
-            let unit_position = ArmyUnitPositionTrait::new(player, army_id, unit_id, global_position);
+            let unit_position = ArmyUnitPositionTrait::new(player, army_id, unit_id, global_position,battlefield_id);
             world.write_model(@unit_position);
 
             if battle.defender_commander_id == player{ 
@@ -255,7 +256,12 @@ pub mod battlefields {
 
             battle.status = BattleStatus::Deploying;
 
-            
+            battle.season += 1;
+
+            if battle.season > 24 {
+                battle.season = 1;
+            }
+
             world.write_model(@battle);
             
             world.emit_event(@UnitDeployedToBattle { 
@@ -617,6 +623,18 @@ pub mod battlefields {
                 64  // Zone 46-54 identifier (Reserve Forces)
             } else {
                 0   // Invalid position
+            }
+        }
+
+        fn get_season(self: @ContractState, count: u64) -> SeasonType {
+            if count >= 1 && count <= 8 {
+                SeasonType::Odd
+            } else if count >= 9 && count <= 16 {
+                SeasonType::Even
+            } else if count >= 17 && count <= 24 {
+               SeasonType::Prime
+            }  else {
+                SeasonType::None
             }
         }
 

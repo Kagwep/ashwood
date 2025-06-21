@@ -15,6 +15,7 @@ pub struct BattleField {
     pub status: BattleStatus,
     pub current_turn: u8,
     pub turn_deadline: u64,
+    pub season: u64,
     pub created_at: u64,
     pub last_action_type: ActionType,
     pub last_action_timestamp: u64,
@@ -130,6 +131,7 @@ pub impl BattleFieldImpl of BattleFieldTrait {
        invader_score: u8,
        current_turn: u8,
        turn_deadline: u64,
+       season: u64,
        created_at: u64,
        last_action_timestamp: u64,
    ) -> BattleField {
@@ -145,6 +147,7 @@ pub impl BattleFieldImpl of BattleFieldTrait {
            status: BattleStatus::WaitingForAttacker,
            current_turn,
            turn_deadline,
+           season,
            created_at,
            last_action_type: ActionType::None,
            last_action_timestamp,

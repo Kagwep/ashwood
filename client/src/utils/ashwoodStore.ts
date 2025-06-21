@@ -10,7 +10,7 @@ export function getAllUnitIds(
 ): string[] {
   return Object.values(armyPositions)
     .filter(position => 
-      removeLeadingZeros(position.commander_id) === commanderId &&
+      position.commander_id === commanderId &&
       position.army_id.toString() === armyId.toString()
     )
     .map(position => position.unit_id.toString());
@@ -36,9 +36,9 @@ export function getDeployedUnits(
 ): string[] {
   return Object.values(armyPositions)
     .filter(position => 
-      removeLeadingZeros(position.commander_id) === commanderId &&
-      position.army_id.toString() === armyId &&
-      position.position_index.toString() !== "0"
+      position.commander_id === commanderId &&
+      position.army_id.toString() === armyId.toString() &&
+      position.position_index.toString() !== "0" && position.battlefield_id.toString() == battlefieldId.toString()
     )
     .map(position => position.unit_id.toString());
 }
@@ -51,7 +51,7 @@ export function getUsedUnits(
 ): string[] {
   return Object.values(armyUnitsUsed)
     .filter(used => 
-      removeLeadingZeros(used.commander_id) === commanderId &&
+      used.commander_id === commanderId &&
       used.army_id.toString() === armyId &&
       used.battlefield_id.toString() === battlefieldId
     )
@@ -81,9 +81,11 @@ type GameState = {
     // Battle-specific data
     invaderBattleUnits: Record<string, Unit>;
     invaderBattleUnitsDeployed: Record<string, Unit>;
+    invaderBattleUnitsNotDeployed: Record<string, Unit>;
     invaderBattleUnitsUsed: Record<string, Unit>;
     defenderBattleUnits: Record<string, Unit>;
     defenderBattleUnitsDeployed: Record<string, Unit>;
+    defenderBattleUnitsNotDeployed: Record<string, Unit>;
     defenderBattleUnitsUsed: Record<string, Unit>;
 
     selectedUnit: (Unit & { positionIndex?: number, armyId?: number }) | null;
@@ -148,9 +150,11 @@ export const useGameStore = create<GameState>((set, get) => ({
     // Battle-specific data
     invaderBattleUnits: {},
     invaderBattleUnitsDeployed: {},
+    invaderBattleUnitsNotDeployed: {},
     invaderBattleUnitsUsed: {},
     defenderBattleUnits: {},
     defenderBattleUnitsDeployed: {},
+    defenderBattleUnitsNotDeployed: {},
     defenderBattleUnitsUsed: {},
 
     selectedArmy: null,
@@ -186,6 +190,14 @@ export const useGameStore = create<GameState>((set, get) => ({
         const deployedUnitIds = getDeployedUnits(state.armyUnitPositions, invaderId, armyId, battleId);
         const deployedUnits = getUnitsByIds(state.units, deployedUnitIds);
         
+        // Get not deployed units (all units minus deployed units)
+        const notDeployedUnits: Record<string, Unit> = {};
+        Object.entries(allUnits).forEach(([id, unit]) => {
+            if (!deployedUnits[id]) {
+                notDeployedUnits[id] = unit;
+            }
+        });
+        
         // Get used units
         const usedUnitIds = getUsedUnits(state.armyUnitsUsed, invaderId, armyId, battleId);
         const usedUnits = getUnitsByIds(state.units, usedUnitIds);
@@ -193,6 +205,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         set({
             invaderBattleUnits: allUnits,
             invaderBattleUnitsDeployed: deployedUnits,
+            invaderBattleUnitsNotDeployed: notDeployedUnits,
             invaderBattleUnitsUsed: usedUnits
         });
     },
@@ -208,6 +221,14 @@ export const useGameStore = create<GameState>((set, get) => ({
         const deployedUnitIds = getDeployedUnits(state.armyUnitPositions, defenderId, armyId, battleId);
         const deployedUnits = getUnitsByIds(state.units, deployedUnitIds);
         
+        // Get not deployed units (all units minus deployed units)
+        const notDeployedUnits: Record<string, Unit> = {};
+        Object.entries(allUnits).forEach(([id, unit]) => {
+            if (!deployedUnits[id]) {
+                notDeployedUnits[id] = unit;
+            }
+        });
+        
         // Get used units
         const usedUnitIds = getUsedUnits(state.armyUnitsUsed, defenderId, armyId, battleId);
         const usedUnits = getUnitsByIds(state.units, usedUnitIds);
@@ -215,6 +236,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         set({
             defenderBattleUnits: allUnits,
             defenderBattleUnitsDeployed: deployedUnits,
+            defenderBattleUnitsNotDeployed: notDeployedUnits,
             defenderBattleUnitsUsed: usedUnits
         });
     },
@@ -429,9 +451,11 @@ export const useGameStore = create<GameState>((set, get) => ({
         // Clear battle-specific data too
         invaderBattleUnits: {},
         invaderBattleUnitsDeployed: {},
+        invaderBattleUnitsNotDeployed: {},
         invaderBattleUnitsUsed: {},
         defenderBattleUnits: {},
         defenderBattleUnitsDeployed: {},
+        defenderBattleUnitsNotDeployed: {},
         defenderBattleUnitsUsed: {}
     })),
 }));

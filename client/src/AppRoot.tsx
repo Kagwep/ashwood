@@ -4,10 +4,11 @@ import { OnboardingProvider } from "./context/OnboardingContext";
 import AppInitializer from "./components/AppInitializer";
 import NetworkSelector from './components/NetworkSelector';
 
-import { client } from "./dojogen/contracts.gen";
+
 import { StarknetProvider } from './providers';
 import { NetworkProvider } from './context/NetworkContext';
 import TacticalCommandHomepage from './pages/HomePage';
+import { client } from './dojogen/contracts.gen';
 
 const AppRoot: React.FC = () => {
   const [showLanding, setShowLanding] = useState(true);

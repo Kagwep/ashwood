@@ -15,11 +15,13 @@ export interface ArmyUnitPosition {
 	army_id: BigNumberish;
 	unit_id: BigNumberish;
 	position_index: BigNumberish;
+	battlefield_id: BigNumberish;
 }
 
 // Type definition for `ashwood::models::army::ArmyUnitPositionValue` struct
 export interface ArmyUnitPositionValue {
 	position_index: BigNumberish;
+	battlefield_id: BigNumberish;
 }
 
 // Type definition for `ashwood::models::army::ArmyUnitUsed` struct
@@ -54,6 +56,7 @@ export interface BattleField {
 	status: BattleStatusEnum;
 	current_turn: BigNumberish;
 	turn_deadline: BigNumberish;
+	season: BigNumberish;
 	created_at: BigNumberish;
 	last_action_type: ActionTypeEnum;
 	last_action_timestamp: BigNumberish;
@@ -89,6 +92,7 @@ export interface BattleFieldValue {
 	status: BattleStatusEnum;
 	current_turn: BigNumberish;
 	turn_deadline: BigNumberish;
+	season: BigNumberish;
 	created_at: BigNumberish;
 	last_action_type: ActionTypeEnum;
 	last_action_timestamp: BigNumberish;
@@ -429,9 +433,11 @@ export const schema: SchemaType = {
 			army_id: 0,
 			unit_id: 0,
 			position_index: 0,
+			battlefield_id: 0,
 		},
 		ArmyUnitPositionValue: {
 			position_index: 0,
+			battlefield_id: 0,
 		},
 		ArmyUnitUsed: {
 			commander_id: "",
@@ -469,6 +475,7 @@ export const schema: SchemaType = {
 				RevealPending: undefined, }),
 			current_turn: 0,
 			turn_deadline: 0,
+			season: 0,
 			created_at: 0,
 		last_action_type: new CairoCustomEnum({ 
 					None: "",
@@ -513,6 +520,7 @@ export const schema: SchemaType = {
 				RevealPending: undefined, }),
 			current_turn: 0,
 			turn_deadline: 0,
+			season: 0,
 			created_at: 0,
 		last_action_type: new CairoCustomEnum({ 
 					None: "",

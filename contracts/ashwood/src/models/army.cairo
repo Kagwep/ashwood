@@ -66,14 +66,15 @@ pub impl ArmyUnitPositionImpl of ArmyUnitPositionTrait {
         commander_id: ContractAddress,
         army_id: u8,
         unit_id: u128,
-        position_index: u8
+        position_index: u8,
+        battlefield_id: u128,
     ) -> ArmyUnitPosition {
         ArmyUnitPosition {
             commander_id,
             army_id,
             unit_id,
             position_index,
-            battlefield_id: 0,
+            battlefield_id,
         }
     }
 

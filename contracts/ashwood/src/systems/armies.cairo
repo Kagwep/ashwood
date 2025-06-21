@@ -78,7 +78,7 @@ pub mod armies {
                     // army_id: u8,
                     // unit_id: u128,
                     // position_index: u8           
-            let army_position = ArmyUnitPositionTrait::new(commander_id, army_id, unit_id,0);
+            let army_position = ArmyUnitPositionTrait::new(commander_id, army_id, unit_id,0,0);
             world.write_model(@army_position);
         }
 

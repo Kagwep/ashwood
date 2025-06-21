@@ -4,19 +4,19 @@ import * as models from "./models.gen";
 
 export function setupWorld(provider: DojoProvider) {
 
-	const build_actions_attackUnit_calldata = (battlefieldId: BigNumberish, attackerUnitId: BigNumberish, targetUnitId: BigNumberish, season: CairoCustomEnum): DojoCall => {
+	const build_actions_attackUnit_calldata = (battlefieldId: BigNumberish, attackerUnitId: BigNumberish, targetUnitId: BigNumberish): DojoCall => {
 		return {
 			contractName: "actions",
 			entrypoint: "attack_unit",
-			calldata: [battlefieldId, attackerUnitId, targetUnitId, season],
+			calldata: [battlefieldId, attackerUnitId, targetUnitId],
 		};
 	};
 
-	const actions_attackUnit = async (snAccount: Account | AccountInterface, battlefieldId: BigNumberish, attackerUnitId: BigNumberish, targetUnitId: BigNumberish, season: CairoCustomEnum) => {
+	const actions_attackUnit = async (snAccount: Account | AccountInterface, battlefieldId: BigNumberish, attackerUnitId: BigNumberish, targetUnitId: BigNumberish) => {
 		try {
 			return await provider.execute(
 				snAccount,
-				build_actions_attackUnit_calldata(battlefieldId, attackerUnitId, targetUnitId, season),
+				build_actions_attackUnit_calldata(battlefieldId, attackerUnitId, targetUnitId),
 				"ashwood",
 			);
 		} catch (error) {
@@ -25,19 +25,19 @@ export function setupWorld(provider: DojoProvider) {
 		}
 	};
 
-	const build_actions_moveUnit_calldata = (battlefieldId: BigNumberish, armyId: BigNumberish, unitId: BigNumberish, fromPosition: BigNumberish, toPosition: BigNumberish, season: CairoCustomEnum): DojoCall => {
+	const build_actions_moveUnit_calldata = (battlefieldId: BigNumberish, armyId: BigNumberish, unitId: BigNumberish, fromPosition: BigNumberish, toPosition: BigNumberish): DojoCall => {
 		return {
 			contractName: "actions",
 			entrypoint: "move_unit",
-			calldata: [battlefieldId, armyId, unitId, fromPosition, toPosition, season],
+			calldata: [battlefieldId, armyId, unitId, fromPosition, toPosition],
 		};
 	};
 
-	const actions_moveUnit = async (snAccount: Account | AccountInterface, battlefieldId: BigNumberish, armyId: BigNumberish, unitId: BigNumberish, fromPosition: BigNumberish, toPosition: BigNumberish, season: CairoCustomEnum) => {
+	const actions_moveUnit = async (snAccount: Account | AccountInterface, battlefieldId: BigNumberish, armyId: BigNumberish, unitId: BigNumberish, fromPosition: BigNumberish, toPosition: BigNumberish) => {
 		try {
 			return await provider.execute(
 				snAccount,
-				build_actions_moveUnit_calldata(battlefieldId, armyId, unitId, fromPosition, toPosition, season),
+				build_actions_moveUnit_calldata(battlefieldId, armyId, unitId, fromPosition, toPosition),
 				"ashwood",
 			);
 		} catch (error) {
@@ -214,19 +214,19 @@ export function setupWorld(provider: DojoProvider) {
 		}
 	};
 
-	const build_battlefields_deployUnitToBattlefield_calldata = (battlefieldId: BigNumberish, armyId: BigNumberish, unitId: BigNumberish, globalPosition: BigNumberish, season: CairoCustomEnum): DojoCall => {
+	const build_battlefields_deployUnitToBattlefield_calldata = (battlefieldId: BigNumberish, armyId: BigNumberish, unitId: BigNumberish, globalPosition: BigNumberish): DojoCall => {
 		return {
 			contractName: "battlefields",
 			entrypoint: "deploy_unit_to_battlefield",
-			calldata: [battlefieldId, armyId, unitId, globalPosition, season],
+			calldata: [battlefieldId, armyId, unitId, globalPosition],
 		};
 	};
 
-	const battlefields_deployUnitToBattlefield = async (snAccount: Account | AccountInterface, battlefieldId: BigNumberish, armyId: BigNumberish, unitId: BigNumberish, globalPosition: BigNumberish, season: CairoCustomEnum) => {
+	const battlefields_deployUnitToBattlefield = async (snAccount: Account | AccountInterface, battlefieldId: BigNumberish, armyId: BigNumberish, unitId: BigNumberish, globalPosition: BigNumberish) => {
 		try {
 			return await provider.execute(
 				snAccount,
-				build_battlefields_deployUnitToBattlefield_calldata(battlefieldId, armyId, unitId, globalPosition, season),
+				build_battlefields_deployUnitToBattlefield_calldata(battlefieldId, armyId, unitId, globalPosition),
 				"ashwood",
 			);
 		} catch (error) {

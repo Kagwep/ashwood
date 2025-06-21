@@ -157,3 +157,17 @@ export function getAllUnitIds(
     )
     .map(position => position.unit_id.toString());
 }
+
+type SeasonType = 'Odd' | 'Even' | 'Prime' | 'None';
+
+export function getSeason(count: number): SeasonType {
+    if (count >= 1 && count <= 8) {
+        return 'Odd';
+    } else if (count >= 9 && count <= 16) {
+        return 'Even';
+    } else if (count >= 17 && count <= 24) {
+        return 'Prime';
+    } else {
+        return 'None';
+    }
+}

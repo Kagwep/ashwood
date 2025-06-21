@@ -1312,8 +1312,8 @@
   },
   "contracts": [
     {
-      "address": "0x1a551cf66c186dded5e251f6d6b26e57df1fc932bceadd62f29208bbcff601d",
-      "class_hash": "0x766fd09aaab46ab887a3df49c824cfb2aeeebfaddd8c624a859b79ae64db07c",
+      "address": "0x2b5559631b4c557f49bc78d896449f8f40d60fcd1475b1820c8c9ffe5f7f437",
+      "class_hash": "0x25911295510293d45c557bae4f5bf8f9f8a622d1a48c2f24c5ccf7a8d7d435d",
       "abi": [
         {
           "type": "impl",
@@ -1371,28 +1371,6 @@
           "interface_name": "ashwood::systems::actions::IActions"
         },
         {
-          "type": "enum",
-          "name": "ashwood::models::battlefield::SeasonType",
-          "variants": [
-            {
-              "name": "None",
-              "type": "()"
-            },
-            {
-              "name": "Odd",
-              "type": "()"
-            },
-            {
-              "name": "Even",
-              "type": "()"
-            },
-            {
-              "name": "Prime",
-              "type": "()"
-            }
-          ]
-        },
-        {
           "type": "interface",
           "name": "ashwood::systems::actions::IActions",
           "items": [
@@ -1419,10 +1397,6 @@
                 {
                   "name": "to_position",
                   "type": "core::integer::u8"
-                },
-                {
-                  "name": "season",
-                  "type": "ashwood::models::battlefield::SeasonType"
                 }
               ],
               "outputs": [],
@@ -1443,10 +1417,6 @@
                 {
                   "name": "target_unit_id",
                   "type": "core::integer::u128"
-                },
-                {
-                  "name": "season",
-                  "type": "ashwood::models::battlefield::SeasonType"
                 }
               ],
               "outputs": [],
@@ -1600,8 +1570,8 @@
       ]
     },
     {
-      "address": "0x2301008b5f1f36d1889cc6d1c8714088c11ef24678211448a016ab4e530dd59",
-      "class_hash": "0x539d361c7fb5dc875f2f6d9553df2ff8c76c3bb245800fccb401db75585ea97",
+      "address": "0x6019c037549973444434de3d636d98e3a37a2614786747d05f960a8b2d7c451",
+      "class_hash": "0x5c92cd39b09724f8e1a475a20f15fb851cf645ff80c4f0784969e163f3b5ee2",
       "abi": [
         {
           "type": "impl",
@@ -1923,8 +1893,8 @@
       ]
     },
     {
-      "address": "0x8ba63f510da3db63129d924acab3131576f81241b56ed751f3731140ae7",
-      "class_hash": "0x77a28e678f16b1aca9d898b2a7e467a3638137429891155d91f089521dbcc5a",
+      "address": "0x53b141cbfb2a620d4ec47ff9bb9abedbb73e632027feead3d4d8e94254b119f",
+      "class_hash": "0x46f1f7b22e86b30dca5734fd0fc1c6245dd45c28a9a7d9d613e0ce22eb99dcc",
       "abi": [
         {
           "type": "impl",
@@ -1980,28 +1950,6 @@
           "type": "impl",
           "name": "BattleFieldsImpl",
           "interface_name": "ashwood::systems::battlefields::IBattleFields"
-        },
-        {
-          "type": "enum",
-          "name": "ashwood::models::battlefield::SeasonType",
-          "variants": [
-            {
-              "name": "None",
-              "type": "()"
-            },
-            {
-              "name": "Odd",
-              "type": "()"
-            },
-            {
-              "name": "Even",
-              "type": "()"
-            },
-            {
-              "name": "Prime",
-              "type": "()"
-            }
-          ]
         },
         {
           "type": "interface",
@@ -2074,10 +2022,6 @@
                 {
                   "name": "global_position",
                   "type": "core::integer::u8"
-                },
-                {
-                  "name": "season",
-                  "type": "ashwood::models::battlefield::SeasonType"
                 }
               ],
               "outputs": [],
@@ -2574,7 +2518,7 @@
     },
     {
       "members": [],
-      "class_hash": "0xb07a2a15f0dcae9912373fd5d3276d52651641c15eb3d4db737518b1958a9d",
+      "class_hash": "0x415beae4e19b8c0db11f7b16eb05b52e0e3f21238677d9a54be816ce67aefe2",
       "tag": "ashwood-ArmyUnitPosition",
       "selector": "0x436592665394a4a5ebae8d62f687bb0dca4672deb50921c1ed8bcdedc05a7c4"
     },
@@ -2586,7 +2530,7 @@
     },
     {
       "members": [],
-      "class_hash": "0x5817bf912556a0b43212f63105d4f90eab1524409f700118fe6b385c4183c5b",
+      "class_hash": "0x141e5b45ca29087f9e5b23b02a1c1873bffdd022816034c89318ebf2f7d8958",
       "tag": "ashwood-BattleField",
       "selector": "0x3768d529408eff1b28cbd1641c0ced5f04f0e011eb79976a2c1b90f7435f71a"
     },

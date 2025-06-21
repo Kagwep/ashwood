@@ -12,8 +12,7 @@ pub trait IActions<T> {
         army_id: u8,
         unit_id: u128,
         from_position: u8,
-        to_position: u8,
-        season: SeasonType
+        to_position: u8
     );
     
     // Attack actions
@@ -21,8 +20,7 @@ pub trait IActions<T> {
         ref self: T,
         battlefield_id: u128,
         attacker_unit_id: u128,
-        target_unit_id: u128,
-        season: SeasonType
+        target_unit_id: u128
     ) ;
     
     // Retreat actions
@@ -87,8 +85,7 @@ pub mod actions {
             army_id: u8,
             unit_id: u128,
             from_position: u8,
-            to_position: u8,
-            season: SeasonType
+            to_position: u8
         )  {
             let mut world = self.world_default();
             let player = get_caller_address();
@@ -108,6 +105,8 @@ pub mod actions {
             let movement_validity = self.validate_movement(battlefield_id, unit_id, from_position, to_position,player);
 
             assert(movement_validity, 'Invalid Move');
+
+            let season: SeasonType  = self.get_season(battle.season);
 
             let position_and_season = self.validate_position_for_season(to_position,season);
 
@@ -161,6 +160,13 @@ pub mod actions {
 
             battle.status = BattleStatus::Strategizing;
 
+            battle.season += 1;
+
+            if battle.season > 24 {
+                battle.season = 1;
+            }
+
+
             world.write_model(@battle);
 
             world.write_model(@existing_unit_position);
@@ -174,8 +180,7 @@ pub mod actions {
             ref self: ContractState,
             battlefield_id: u128,
             attacker_unit_id: u128,
-            target_unit_id: u128,
-            season: SeasonType
+            target_unit_id: u128
         ) {
             let mut world = self.world_default();
             let player = get_caller_address();
@@ -208,6 +213,8 @@ pub mod actions {
             
             // The target unit belongs to the opponent's army
             let mut target_unit_position: ArmyUnitPosition = world.read_model((opponent_commander, opponent_army_id, target_unit_id));
+
+            let season: SeasonType  = self.get_season(battle.season);
             
             // Validate season for the target position
             let position_and_season = self.validate_position_for_season(target_unit_position.position_index, season);
@@ -347,6 +354,13 @@ pub mod actions {
             battlefield_stats.last_updated = timestamp;
 
             world.write_model(@battlefield_stats);
+
+            battle.season += 1;
+
+            if battle.season > 24 {
+                battle.season = 1;
+            }
+
             // Write updated battle state
             world.write_model(@battle);
         }
@@ -729,6 +743,17 @@ pub mod actions {
                 },
                 _ => false
 
+            }
+        }
+        fn get_season(self: @ContractState, count: u64) -> SeasonType {
+            if count >= 1 && count <= 8 {
+                SeasonType::Odd
+            } else if count >= 9 && count <= 16 {
+                SeasonType::Even
+            } else if count >= 17 && count <= 24 {
+               SeasonType::Prime
+            }  else {
+                SeasonType::None
             }
         }
     }

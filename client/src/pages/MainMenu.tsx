@@ -266,7 +266,8 @@ const AshwoodMainMenu = () => {
       }
   };
 
-  const handleEnterBattle = (battleId,invaderId,defenderId) =>{
+  const handleEnterBattle =  (battleId,invaderId,defenderId,army_id) =>{
+    set_army_id(army_id)
     set_battle_id(battleId)
     set_game_state(GameState.Arena)
     setDefenderId(defenderId);
@@ -434,6 +435,9 @@ const AshwoodMainMenu = () => {
                 };
                 
                 const winner = getWinner();
+
+                const army_id = isUserDefender ? battlefield.defender_army_id : battlefield.invader_army_id;
+                console.log(army_id)
                 
                 return (
                   <div key={battlefield.battlefield_id} 
@@ -519,7 +523,7 @@ const AshwoodMainMenu = () => {
                         ) : battlefield.status as unknown as string === 'Deploying' || battlefield.status as unknown as string === 'Strategizing' || battlefield.status as unknown as string === 'Engaged' ? (
                           isUserInBattle ? (
                             <button
-                              onClick={() => handleEnterBattle(battlefield.battlefield_id,battlefield.invader_commander_id,battlefield.defender_commander_id)}
+                              onClick={() => handleEnterBattle(battlefield.battlefield_id,battlefield.invader_commander_id,battlefield.defender_commander_id,army_id)}
                               className="px-3 py-1 bg-gradient-to-r from-blue-700 to-blue-600 
                                         border border-blue-500 rounded text-blue-100 text-xs font-bold
                                         hover:from-blue-600 hover:to-blue-500 transition-all duration-200"
@@ -528,7 +532,7 @@ const AshwoodMainMenu = () => {
                             </button>
                           ) : (
                             <button
-                              onClick={() => handleEnterBattle(battlefield.battlefield_id,battlefield.invader_commander_id,battlefield.defender_commander_id)}
+                              onClick={() => handleEnterBattle(battlefield.battlefield_id,battlefield.invader_commander_id,battlefield.defender_commander_id,army_id)}
                               className="px-3 py-1 bg-gradient-to-r from-purple-700 to-purple-600 
                                         border border-purple-500 rounded text-purple-100 text-xs font-bold
                                         hover:from-purple-600 hover:to-purple-500 transition-all duration-200"
