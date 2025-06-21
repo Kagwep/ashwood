@@ -1,0 +1,19 @@
+
+[namespace]
+default = "ashwood"
+
+[env]
+account_address = "0x0215AF1A59d8ba6D49e4cc965bE8BfCd6Cbd86E0AbE758B32a82BDB353B749dE"
+private_key = ""
+rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
+
+[world]
+seed = "touchline_1"
+name = "Touchline"
+description = "Become a manager"
+cover_uri = "file://assets/bg.webp"
+website = "https://command-nexus.vercel.app/"
+
+
+[writers]
+"ashwood" = ["ashwood-actions","ashwood-armies","ashwood-battlefields","ashwood-units"]
