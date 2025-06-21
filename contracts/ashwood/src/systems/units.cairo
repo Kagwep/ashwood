@@ -2,7 +2,7 @@ use starknet::ContractAddress;
 use ashwood::models::unit::{Unit, UnitTrait, UnitClass};
 
 #[starknet::interface]
-pub trait IUnit<T> {
+pub trait IUnits<T> {
     fn create_unit(
         ref self: T, 
         id: u128, 
@@ -20,8 +20,8 @@ pub trait IUnit<T> {
 }
 
 #[dojo::contract]
-pub mod unit {
-    use super::{IUnit, Unit, UnitTrait, UnitClass};
+pub mod units {
+    use super::{IUnits, Unit, UnitTrait, UnitClass};
     use starknet::{ContractAddress, get_caller_address};
     use dojo::model::{ModelStorage};
     use dojo::event::EventStorage;
@@ -59,7 +59,7 @@ pub mod unit {
     }
 
     #[abi(embed_v0)]
-    impl UnitImpl of IUnit<ContractState> {
+    impl UnitsImpl of IUnits<ContractState> {
         fn create_unit(
             ref self: ContractState,
             id: u128,
@@ -75,7 +75,7 @@ pub mod unit {
             
             // Verify unit doesn't already exist
             let existing_unit: Unit = world.read_model(id);
-            assert(existing_unit.id == 0, 'Unit already exists');
+            assert(existing_unit.attack == 0, 'Unit already exists');
             
             let unit = UnitTrait::new(id, player_name, unit_class, attack, defense, speed, special);
             world.write_model(@unit);

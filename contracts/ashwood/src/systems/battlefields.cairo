@@ -4,12 +4,12 @@ use ashwood::models::unit::{Unit, UnitTrait};
 use ashwood::models::army::{Army, ArmyUnitPosition, ArmyUnitUsed, ArmyUnitPositionTrait, ArmyUnitUsedTrait};
 
 #[starknet::interface]
-pub trait IBattleField<T> {
+pub trait IBattleFields<T> {
     fn create_battle(
         ref self: T,
         battlefield_id: u128,
         invader_army_id: u8,
-        turn_deadline: u64,
+        battle_name: felt252
     );
     fn join_battle(
         ref self: T,
@@ -32,8 +32,8 @@ pub trait IBattleField<T> {
 }
 
 #[dojo::contract]
-pub mod battlefield {
-    use super::{IBattleField, BattleField, BattleFieldTrait, BattleStatus, ActionType, SeasonType,BattleZone, 
+pub mod battlefields {
+    use super::{IBattleFields, BattleField, BattleFieldTrait, BattleStatus, ActionType, SeasonType,BattleZone, 
                 Unit, UnitTrait, Army, ArmyUnitPosition, ArmyUnitUsed, ArmyUnitPositionTrait, ArmyUnitUsedTrait,BattleFieldPosition,BattlefieldStats,GridPosition};
     use starknet::{ContractAddress, get_caller_address, get_block_timestamp};
     use dojo::model::{ModelStorage};
@@ -91,12 +91,12 @@ pub mod battlefield {
     }
 
     #[abi(embed_v0)]
-    impl BattleFieldImpl of IBattleField<ContractState> {
+    impl BattleFieldsImpl of IBattleFields<ContractState> {
         fn create_battle(
             ref self: ContractState,
             battlefield_id: u128,
             invader_army_id: u8,
-            turn_deadline: u64,
+            battle_name: felt252,
         ) {
             let mut world = self.world_default();
             let timestamp = get_block_timestamp();
@@ -109,12 +109,13 @@ pub mod battlefield {
                 battlefield_id,
                 defender_commander_id: Zero::zero(),
                 invader_commander_id: player,
+                battle_name: battle_name,
                 defender_army_id: 0,//defender_army_id
                 invader_army_id : invader_army_id,
                 defender_score:0, // defender_score
                 invader_score: 0, // invader_score
                 current_turn: 1, // current_turn
-                turn_deadline: turn_deadline,
+                turn_deadline: 0,
                 created_at: timestamp,
                 last_action_timestamp: timestamp
             );
@@ -145,8 +146,8 @@ pub mod battlefield {
 
             assert(battle.invader_commander_id != Zero::zero(), 'Battle not active');
             assert(battle.defender_commander_id == Zero::zero(), 'Battle  active');
-            assert(battle.status != BattleStatus::WaitingForAttacker, 'Battle not active');
-            assert(battle.defender_army_id == 0, 'Battle not active');
+            assert(battle.status == BattleStatus::WaitingForAttacker, 'Battle not active');
+
 
             battle.defender_commander_id = player;
             battle.status = BattleStatus::Initialized;
@@ -280,7 +281,7 @@ pub mod battlefield {
             // Verify battle exists and is active
             let mut battle: BattleField = world.read_model(battlefield_id);
             assert(battle.is_active(), 'Battle not active');
-            assert(battle.is_player_turn(player), 'Not your turn');
+   
 
             battle.status = BattleStatus::Engaged;
 
@@ -305,155 +306,6 @@ pub mod battlefield {
 
             world.write_model(@battle);
         }
-
-        // fn move_unit_on_battlefield(
-        //     ref self: ContractState,
-        //     battlefield_id: u128,
-        //     army_id: u8,
-        //     unit_id: u128,
-        //     new_position: u8
-        // ) {
-        //     let mut world = self.world_default();
-        //     let player = get_caller_address();
-            
-        //     let mut battle: BattleField = world.read_model(battlefield_id);
-        //     assert(battle.is_active(), 'Battle not active');
-        //     assert(battle.is_player_turn(player), 'Not your turn');
-            
-        //     // Get current unit position
-        //     let mut unit_position: ArmyUnitPosition = world.read_model((player, army_id, unit_id));
-        //     assert(unit_position.is_deployed(), 'Unit not deployed');
-            
-        //     let old_position = unit_position.position_index;
-            
-        //     // Get unit for movement validation
-        //     let unit: Unit = world.read_model(unit_id);
-        //     let movement_range = unit.get_movement_range();
-            
-        //     // Validate movement range (simplified)
-        //     let distance = if new_position > old_position { 
-        //         new_position - old_position 
-        //     } else { 
-        //         old_position - new_position 
-        //     };
-        //     assert(distance <= movement_range, 'Movement out of range');
-            
-        //     // Check if unit was already used this turn
-        //     let unit_used: ArmyUnitUsed = world.read_model((player, army_id, battlefield_id, unit_id));
-        //     assert(!unit_used.was_used_this_turn(battle.current_turn), 'Unit already used this turn');
-            
-        //     // Update position
-        //     unit_position.update_position(new_position);
-        //     world.write_model(@unit_position);
-            
-        //     // Mark unit as used
-        //     let unit_used_new = ArmyUnitUsed::new(player, army_id, battlefield_id, unit_id, battle.current_turn);
-        //     world.write_model(@unit_used_new);
-            
-        //     world.emit_event(@UnitMoved { 
-        //         battlefield_id,
-        //         army_id,
-        //         unit_id,
-        //         from_position: old_position,
-        //         to_position: new_position,
-        //         turn: battle.current_turn
-        //     });
-        // }
-
-        // fn engage_units(
-        //     ref self: ContractState,
-        //     battlefield_id: u128,
-        //     attacker_army_id: u8,
-        //     attacker_unit_id: u128,
-        //     target_unit_id: u128
-        // ) {
-        //     let mut world = self.world_default();
-        //     let player = get_caller_address();
-            
-        //     let mut battle: BattleField = world.read_model(battlefield_id);
-        //     assert(battle.is_active(), 'Battle not active');
-        //     assert(battle.is_player_turn(player), 'Not your turn');
-            
-        //     // Verify attacker ownership
-        //     let _attacker_army: Army = world.read_model((player, attacker_army_id));
-        //     let attacker_position: ArmyUnitPosition = world.read_model((player, attacker_army_id, attacker_unit_id));
-        //     assert(attacker_position.is_deployed(), 'Attacker not deployed');
-            
-        //     // Check if attacker was already used this turn
-        //     let attacker_used: ArmyUnitUsed = world.read_model((player, attacker_army_id, battlefield_id, attacker_unit_id));
-        //     assert(!attacker_used.was_used_this_turn(battle.current_turn), 'Unit already used this turn');
-            
-        //     // Get target (from opposing army)
-        //     let opposing_player = if player == battle.defender_commander_id {
-        //         battle.invader_commander_id
-        //     } else {
-        //         battle.defender_commander_id
-        //     };
-        //     let opposing_army_id = if player == battle.defender_commander_id {
-        //         battle.invader_army_id
-        //     } else {
-        //         battle.defender_army_id
-        //     };
-            
-        //     let target_position: ArmyUnitPosition = world.read_model((opposing_player, opposing_army_id, target_unit_id));
-        //     assert(target_position.is_deployed(), 'Target not deployed');
-            
-        //     // Get units for combat calculation
-        //     let attacker: Unit = world.read_model(attacker_unit_id);
-        //     let target: Unit = world.read_model(target_unit_id);
-            
-        //     // Calculate damage
-        //     let damage = attacker.calculate_damage_to(target);
-            
-        //     // Update battle scores
-        //     if player == battle.defender_commander_id {
-        //         battle.update_score(damage, 0);
-        //     } else {
-        //         battle.update_score(0, damage);
-        //     }
-            
-        //     // Mark attacker as used
-        //     let attacker_used_new = ArmyUnitUsed::new(player, attacker_army_id, battlefield_id, attacker_unit_id, battle.current_turn);
-        //     world.write_model(@attacker_used_new);
-            
-        //     battle.record_action(ActionType::Attack, get_block_timestamp());
-        //     world.write_model(@battle);
-            
-        //     world.emit_event(@UnitEngagement { 
-        //         battlefield_id, 
-        //         attacker_army_id,
-        //         attacker_unit_id, 
-        //         target_unit_id, 
-        //         damage_dealt: damage, 
-        //         turn: battle.current_turn 
-        //     });
-        // }
-
-        // fn advance_turn(ref self: ContractState, battlefield_id: u128) {
-        //     let mut world = self.world_default();
-        //     let player = get_caller_address();
-            
-        //     let mut battle: BattleField = world.read_model(battlefield_id);
-        //     assert(battle.is_active(), 'Battle not active');
-        //     assert(battle.is_player_turn(player), 'Not your turn');
-            
-        //     battle.advance_turn();
-            
-        //     // Check for victory conditions
-        //     if battle.current_turn > 40 {
-        //         if battle.defender_score > battle.invader_score {
-        //             battle.update_status(BattleStatus::DefenderVictory);
-        //         } else if battle.invader_score > battle.defender_score {
-        //             battle.update_status(BattleStatus::AttackerVictory);
-        //         } else {
-        //             battle.update_status(BattleStatus::Stalemate);
-        //         }
-        //     }
-            
-        //     world.write_model(@battle);
-        // }
-
-
 
     }
 

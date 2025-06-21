@@ -3,17 +3,18 @@ use ashwood::models::army::{Army, ArmyTrait, ArmyUnitPosition, ArmyUnitPositionT
 use ashwood::models::unit::{Unit};
 
 #[starknet::interface]
-pub trait IArmy<T> {
+pub trait IArmies<T> {
     fn create_army(ref self: T, army_id: u8, name: felt252);
     fn rename_army(ref self: T, army_id: u8, new_name: felt252);
+    fn add_unit_to_army(ref self: T, army_id: u8, unit_id: u128);
     fn remove_unit_from_army(ref self: T, army_id: u8, unit_id: u128);
     fn mark_unit_used(ref self: T, army_id: u8, battlefield_id: u128, unit_id: u128, turn: u8);
     fn is_unit_used_this_turn(ref self: T, army_id: u8, battlefield_id: u128, unit_id: u128, turn: u8) -> bool;
 }
 
 #[dojo::contract]
-pub mod army {
-    use super::{IArmy, Army, ArmyTrait, ArmyUnitPosition, ArmyUnitPositionTrait, ArmyUnitUsed, ArmyUnitUsedTrait, Unit};
+pub mod armies {
+    use super::{IArmies, Army, ArmyTrait, ArmyUnitPosition, ArmyUnitPositionTrait, ArmyUnitUsed, ArmyUnitUsedTrait, Unit};
     use starknet::{ContractAddress, get_caller_address};
     use dojo::model::{ModelStorage};
     use dojo::event::EventStorage;
@@ -49,7 +50,7 @@ pub mod army {
     }
 
     #[abi(embed_v0)]
-    impl ArmyImpl of IArmy<ContractState> {
+    impl ArmiesImpl of IArmies<ContractState> {
         fn create_army(ref self: ContractState, army_id: u8, name: felt252) {
             let mut world = self.world_default();
             let commander_id = get_caller_address();
@@ -69,6 +70,17 @@ pub mod army {
             world.write_model(@army);
         }
 
+        fn add_unit_to_army(ref self: ContractState, army_id: u8, unit_id: u128){
+            let mut world = self.world_default();
+            let commander_id = get_caller_address();
+
+                    // commander_id: ContractAddress,
+                    // army_id: u8,
+                    // unit_id: u128,
+                    // position_index: u8           
+            let army_position = ArmyUnitPositionTrait::new(commander_id, army_id, unit_id,0);
+            world.write_model(@army_position);
+        }
 
         fn remove_unit_from_army(ref self: ContractState, army_id: u8, unit_id: u128) {
             let mut world = self.world_default();

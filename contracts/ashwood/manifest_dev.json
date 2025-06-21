@@ -1,8 +1,8 @@
 {
   "world": {
-    "class_hash": "0x7c9469d45a9cdbab775035afb48e1fa73fb35ab059fcb9dfb0a301aa973e783",
-    "address": "0x65ee8188c171a836294feaa931f1c78b5f18957791c039e84ee40b4b3e85d3e",
-    "seed": "dojo_starter",
+    "class_hash": "0x75fc75bcd1a7f8b4bf64b74978b0f89c8cee44bb755c1dae6f82284756451ec",
+    "address": "0x4d1a420f1cd9650b71ae9ce4274cf8009aafd1dbeac7a548773f49f842f6f7d",
+    "seed": "ashwood",
     "name": "Dojo starter",
     "entrypoints": [
       "uuid",
@@ -1312,8 +1312,8 @@
   },
   "contracts": [
     {
-      "address": "0x62f6a8b1bc8f4b45985eaff3b00f85f370d6eb8dcb038072f3bf34fba0dd855",
-      "class_hash": "0x7e929027a6456c78b98bd4b54a4ab5db0058fae29e5c3a35d87aae49655236",
+      "address": "0x1a551cf66c186dded5e251f6d6b26e57df1fc932bceadd62f29208bbcff601d",
+      "class_hash": "0x766fd09aaab46ab887a3df49c824cfb2aeeebfaddd8c624a859b79ae64db07c",
       "abi": [
         {
           "type": "impl",
@@ -1368,48 +1368,105 @@
         {
           "type": "impl",
           "name": "ActionsImpl",
-          "interface_name": "dojo_starter::systems::actions::IActions"
+          "interface_name": "ashwood::systems::actions::IActions"
         },
         {
           "type": "enum",
-          "name": "dojo_starter::models::Direction",
+          "name": "ashwood::models::battlefield::SeasonType",
           "variants": [
             {
-              "name": "Left",
+              "name": "None",
               "type": "()"
             },
             {
-              "name": "Right",
+              "name": "Odd",
               "type": "()"
             },
             {
-              "name": "Up",
+              "name": "Even",
               "type": "()"
             },
             {
-              "name": "Down",
+              "name": "Prime",
               "type": "()"
             }
           ]
         },
         {
           "type": "interface",
-          "name": "dojo_starter::systems::actions::IActions",
+          "name": "ashwood::systems::actions::IActions",
           "items": [
             {
               "type": "function",
-              "name": "spawn",
-              "inputs": [],
+              "name": "move_unit",
+              "inputs": [
+                {
+                  "name": "battlefield_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "army_id",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "unit_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "from_position",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "to_position",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "season",
+                  "type": "ashwood::models::battlefield::SeasonType"
+                }
+              ],
               "outputs": [],
               "state_mutability": "external"
             },
             {
               "type": "function",
-              "name": "move",
+              "name": "attack_unit",
               "inputs": [
                 {
-                  "name": "direction",
-                  "type": "dojo_starter::models::Direction"
+                  "name": "battlefield_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "attacker_unit_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "target_unit_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "season",
+                  "type": "ashwood::models::battlefield::SeasonType"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "retreat_unit",
+              "inputs": [
+                {
+                  "name": "battlefield_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "army_id",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "unit_id",
+                  "type": "core::integer::u128"
                 }
               ],
               "outputs": [],
@@ -1516,7 +1573,7 @@
         },
         {
           "type": "event",
-          "name": "dojo_starter::systems::actions::actions::Event",
+          "name": "ashwood::systems::actions::actions::Event",
           "kind": "enum",
           "variants": [
             {
@@ -1533,11 +1590,976 @@
         }
       ],
       "init_calldata": [],
-      "tag": "dojo_starter-actions",
-      "selector": "0x7a1c71029f2d0b38e3ac89b09931d08b6e48417e079c289ff19a8698d0cba33",
+      "tag": "ashwood-actions",
+      "selector": "0x5aadd958c2b32b57ead20cbc34bc316d8d7fb96a5e8f97491f606082986d774",
       "systems": [
-        "spawn",
-        "move",
+        "move_unit",
+        "attack_unit",
+        "retreat_unit",
+        "upgrade"
+      ]
+    },
+    {
+      "address": "0x2301008b5f1f36d1889cc6d1c8714088c11ef24678211448a016ab4e530dd59",
+      "class_hash": "0x539d361c7fb5dc875f2f6d9553df2ff8c76c3bb245800fccb401db75585ea97",
+      "abi": [
+        {
+          "type": "impl",
+          "name": "armies__ContractImpl",
+          "interface_name": "dojo::contract::interface::IContract"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::interface::IContract",
+          "items": []
+        },
+        {
+          "type": "impl",
+          "name": "armies__DeployedContractImpl",
+          "interface_name": "dojo::meta::interface::IDeployedResource"
+        },
+        {
+          "type": "struct",
+          "name": "core::byte_array::ByteArray",
+          "members": [
+            {
+              "name": "data",
+              "type": "core::array::Array::<core::bytes_31::bytes31>"
+            },
+            {
+              "name": "pending_word",
+              "type": "core::felt252"
+            },
+            {
+              "name": "pending_word_len",
+              "type": "core::integer::u32"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::meta::interface::IDeployedResource",
+          "items": [
+            {
+              "type": "function",
+              "name": "dojo_name",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "ArmiesImpl",
+          "interface_name": "ashwood::systems::armies::IArmies"
+        },
+        {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "ashwood::systems::armies::IArmies",
+          "items": [
+            {
+              "type": "function",
+              "name": "create_army",
+              "inputs": [
+                {
+                  "name": "army_id",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "name",
+                  "type": "core::felt252"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "rename_army",
+              "inputs": [
+                {
+                  "name": "army_id",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "new_name",
+                  "type": "core::felt252"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "add_unit_to_army",
+              "inputs": [
+                {
+                  "name": "army_id",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "unit_id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "remove_unit_from_army",
+              "inputs": [
+                {
+                  "name": "army_id",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "unit_id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "mark_unit_used",
+              "inputs": [
+                {
+                  "name": "army_id",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "battlefield_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "unit_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "turn",
+                  "type": "core::integer::u8"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "is_unit_used_this_turn",
+              "inputs": [
+                {
+                  "name": "army_id",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "battlefield_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "unit_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "turn",
+                  "type": "core::integer::u8"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
+              "state_mutability": "external"
+            }
+          ]
+        },
+        {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "view"
+        },
+        {
+          "type": "impl",
+          "name": "WorldProviderImpl",
+          "interface_name": "dojo::contract::components::world_provider::IWorldProvider"
+        },
+        {
+          "type": "struct",
+          "name": "dojo::world::iworld::IWorldDispatcher",
+          "members": [
+            {
+              "name": "contract_address",
+              "type": "core::starknet::contract_address::ContractAddress"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::world_provider::IWorldProvider",
+          "items": [
+            {
+              "type": "function",
+              "name": "world_dispatcher",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "dojo::world::iworld::IWorldDispatcher"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "UpgradeableImpl",
+          "interface_name": "dojo::contract::components::upgradeable::IUpgradeable"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::upgradeable::IUpgradeable",
+          "items": [
+            {
+              "type": "function",
+              "name": "upgrade",
+              "inputs": [
+                {
+                  "name": "new_class_hash",
+                  "type": "core::starknet::class_hash::ClassHash"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            }
+          ]
+        },
+        {
+          "type": "constructor",
+          "name": "constructor",
+          "inputs": []
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+          "kind": "struct",
+          "members": [
+            {
+              "name": "class_hash",
+              "type": "core::starknet::class_hash::ClassHash",
+              "kind": "data"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "Upgraded",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+              "kind": "nested"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+          "kind": "enum",
+          "variants": []
+        },
+        {
+          "type": "event",
+          "name": "ashwood::systems::armies::armies::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "UpgradeableEvent",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+              "kind": "nested"
+            },
+            {
+              "name": "WorldProviderEvent",
+              "type": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+              "kind": "nested"
+            }
+          ]
+        }
+      ],
+      "init_calldata": [],
+      "tag": "ashwood-armies",
+      "selector": "0x9fe651680f431381361a2fa39a2679d1d9345bc9fedace38b25c53d94dca52",
+      "systems": [
+        "create_army",
+        "rename_army",
+        "add_unit_to_army",
+        "remove_unit_from_army",
+        "mark_unit_used",
+        "is_unit_used_this_turn",
+        "upgrade"
+      ]
+    },
+    {
+      "address": "0x8ba63f510da3db63129d924acab3131576f81241b56ed751f3731140ae7",
+      "class_hash": "0x77a28e678f16b1aca9d898b2a7e467a3638137429891155d91f089521dbcc5a",
+      "abi": [
+        {
+          "type": "impl",
+          "name": "battlefields__ContractImpl",
+          "interface_name": "dojo::contract::interface::IContract"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::interface::IContract",
+          "items": []
+        },
+        {
+          "type": "impl",
+          "name": "battlefields__DeployedContractImpl",
+          "interface_name": "dojo::meta::interface::IDeployedResource"
+        },
+        {
+          "type": "struct",
+          "name": "core::byte_array::ByteArray",
+          "members": [
+            {
+              "name": "data",
+              "type": "core::array::Array::<core::bytes_31::bytes31>"
+            },
+            {
+              "name": "pending_word",
+              "type": "core::felt252"
+            },
+            {
+              "name": "pending_word_len",
+              "type": "core::integer::u32"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::meta::interface::IDeployedResource",
+          "items": [
+            {
+              "type": "function",
+              "name": "dojo_name",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "BattleFieldsImpl",
+          "interface_name": "ashwood::systems::battlefields::IBattleFields"
+        },
+        {
+          "type": "enum",
+          "name": "ashwood::models::battlefield::SeasonType",
+          "variants": [
+            {
+              "name": "None",
+              "type": "()"
+            },
+            {
+              "name": "Odd",
+              "type": "()"
+            },
+            {
+              "name": "Even",
+              "type": "()"
+            },
+            {
+              "name": "Prime",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "ashwood::systems::battlefields::IBattleFields",
+          "items": [
+            {
+              "type": "function",
+              "name": "create_battle",
+              "inputs": [
+                {
+                  "name": "battlefield_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "invader_army_id",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "battle_name",
+                  "type": "core::felt252"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "join_battle",
+              "inputs": [
+                {
+                  "name": "battlefield_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "army_id",
+                  "type": "core::integer::u8"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "start_battle",
+              "inputs": [
+                {
+                  "name": "battlefield_id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "deploy_unit_to_battlefield",
+              "inputs": [
+                {
+                  "name": "battlefield_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "army_id",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "unit_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "global_position",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "season",
+                  "type": "ashwood::models::battlefield::SeasonType"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            }
+          ]
+        },
+        {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "view"
+        },
+        {
+          "type": "impl",
+          "name": "WorldProviderImpl",
+          "interface_name": "dojo::contract::components::world_provider::IWorldProvider"
+        },
+        {
+          "type": "struct",
+          "name": "dojo::world::iworld::IWorldDispatcher",
+          "members": [
+            {
+              "name": "contract_address",
+              "type": "core::starknet::contract_address::ContractAddress"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::world_provider::IWorldProvider",
+          "items": [
+            {
+              "type": "function",
+              "name": "world_dispatcher",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "dojo::world::iworld::IWorldDispatcher"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "UpgradeableImpl",
+          "interface_name": "dojo::contract::components::upgradeable::IUpgradeable"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::upgradeable::IUpgradeable",
+          "items": [
+            {
+              "type": "function",
+              "name": "upgrade",
+              "inputs": [
+                {
+                  "name": "new_class_hash",
+                  "type": "core::starknet::class_hash::ClassHash"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            }
+          ]
+        },
+        {
+          "type": "constructor",
+          "name": "constructor",
+          "inputs": []
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+          "kind": "struct",
+          "members": [
+            {
+              "name": "class_hash",
+              "type": "core::starknet::class_hash::ClassHash",
+              "kind": "data"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "Upgraded",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+              "kind": "nested"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+          "kind": "enum",
+          "variants": []
+        },
+        {
+          "type": "event",
+          "name": "ashwood::systems::battlefields::battlefields::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "UpgradeableEvent",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+              "kind": "nested"
+            },
+            {
+              "name": "WorldProviderEvent",
+              "type": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+              "kind": "nested"
+            }
+          ]
+        }
+      ],
+      "init_calldata": [],
+      "tag": "ashwood-battlefields",
+      "selector": "0x4e64202bf1f66c1c9e0433ae017d9247bfd1035278d8820b8030cba79e31c19",
+      "systems": [
+        "create_battle",
+        "join_battle",
+        "start_battle",
+        "deploy_unit_to_battlefield",
+        "upgrade"
+      ]
+    },
+    {
+      "address": "0x43675e7e440939077fff15236ec209941dcf452fc70b1b701fb701c99b0794",
+      "class_hash": "0x1f4fb3b897c93cd355919f960a8dfdc0b00aa443553eeb96e3876ac4ce49691",
+      "abi": [
+        {
+          "type": "impl",
+          "name": "units__ContractImpl",
+          "interface_name": "dojo::contract::interface::IContract"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::interface::IContract",
+          "items": []
+        },
+        {
+          "type": "impl",
+          "name": "units__DeployedContractImpl",
+          "interface_name": "dojo::meta::interface::IDeployedResource"
+        },
+        {
+          "type": "struct",
+          "name": "core::byte_array::ByteArray",
+          "members": [
+            {
+              "name": "data",
+              "type": "core::array::Array::<core::bytes_31::bytes31>"
+            },
+            {
+              "name": "pending_word",
+              "type": "core::felt252"
+            },
+            {
+              "name": "pending_word_len",
+              "type": "core::integer::u32"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::meta::interface::IDeployedResource",
+          "items": [
+            {
+              "type": "function",
+              "name": "dojo_name",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "UnitsImpl",
+          "interface_name": "ashwood::systems::units::IUnits"
+        },
+        {
+          "type": "enum",
+          "name": "ashwood::models::unit::UnitClass",
+          "variants": [
+            {
+              "name": "Infantry",
+              "type": "()"
+            },
+            {
+              "name": "Pike",
+              "type": "()"
+            },
+            {
+              "name": "Archer",
+              "type": "()"
+            },
+            {
+              "name": "Cavalry",
+              "type": "()"
+            },
+            {
+              "name": "Elite",
+              "type": "()"
+            },
+            {
+              "name": "Support",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "ashwood::systems::units::IUnits",
+          "items": [
+            {
+              "type": "function",
+              "name": "create_unit",
+              "inputs": [
+                {
+                  "name": "id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "player_name",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "unit_class",
+                  "type": "ashwood::models::unit::UnitClass"
+                },
+                {
+                  "name": "attack",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "defense",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "speed",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "special",
+                  "type": "core::integer::u8"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "update_unit_stats",
+              "inputs": [
+                {
+                  "name": "id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "attack",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "defense",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "speed",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "special",
+                  "type": "core::integer::u8"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "check_advantage",
+              "inputs": [
+                {
+                  "name": "attacker_id",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "target_id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "is_ranged",
+              "inputs": [
+                {
+                  "name": "id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "can_support",
+              "inputs": [
+                {
+                  "name": "id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
+              "state_mutability": "external"
+            }
+          ]
+        },
+        {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "view"
+        },
+        {
+          "type": "impl",
+          "name": "WorldProviderImpl",
+          "interface_name": "dojo::contract::components::world_provider::IWorldProvider"
+        },
+        {
+          "type": "struct",
+          "name": "dojo::world::iworld::IWorldDispatcher",
+          "members": [
+            {
+              "name": "contract_address",
+              "type": "core::starknet::contract_address::ContractAddress"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::world_provider::IWorldProvider",
+          "items": [
+            {
+              "type": "function",
+              "name": "world_dispatcher",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "dojo::world::iworld::IWorldDispatcher"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "UpgradeableImpl",
+          "interface_name": "dojo::contract::components::upgradeable::IUpgradeable"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::upgradeable::IUpgradeable",
+          "items": [
+            {
+              "type": "function",
+              "name": "upgrade",
+              "inputs": [
+                {
+                  "name": "new_class_hash",
+                  "type": "core::starknet::class_hash::ClassHash"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            }
+          ]
+        },
+        {
+          "type": "constructor",
+          "name": "constructor",
+          "inputs": []
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+          "kind": "struct",
+          "members": [
+            {
+              "name": "class_hash",
+              "type": "core::starknet::class_hash::ClassHash",
+              "kind": "data"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "Upgraded",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+              "kind": "nested"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+          "kind": "enum",
+          "variants": []
+        },
+        {
+          "type": "event",
+          "name": "ashwood::systems::units::units::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "UpgradeableEvent",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+              "kind": "nested"
+            },
+            {
+              "name": "WorldProviderEvent",
+              "type": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+              "kind": "nested"
+            }
+          ]
+        }
+      ],
+      "init_calldata": [],
+      "tag": "ashwood-units",
+      "selector": "0x58b458d61ae40ac8e7131648e4a4b5e8fcce5f9028f3f7bc298696ddb293864",
+      "systems": [
+        "create_unit",
+        "update_unit_stats",
+        "check_advantage",
+        "is_ranged",
+        "can_support",
         "upgrade"
       ]
     }
@@ -1546,29 +2568,113 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0x5dee089cbc4c8e6b4dbb08ee91ca9e275c5f5bb0be158ebae60ecd3b06989dd",
-      "tag": "dojo_starter-DirectionsAvailable",
-      "selector": "0x77844f1facb51e60e546a9832d56c6bd04fa23be4fd5b57290caae5e9a3c1e4"
+      "class_hash": "0x400714ad41a84407d012880ad962242897746e20e91d93d4ffb0b667356848a",
+      "tag": "ashwood-Army",
+      "selector": "0x5704295f43077ddae398f470eae84b94ee557106c0ab7b6b92f802167e5d92a"
     },
     {
       "members": [],
-      "class_hash": "0x1a3faf9f018c2d792f06a9b52bd0b01b78bd652cb2dafbb3869f12814f0825b",
-      "tag": "dojo_starter-Moves",
-      "selector": "0x2a29373f1af8348bd366a990eb3a342ef2cbe5e85160539eaca3441a673f468"
+      "class_hash": "0xb07a2a15f0dcae9912373fd5d3276d52651641c15eb3d4db737518b1958a9d",
+      "tag": "ashwood-ArmyUnitPosition",
+      "selector": "0x436592665394a4a5ebae8d62f687bb0dca4672deb50921c1ed8bcdedc05a7c4"
     },
     {
       "members": [],
-      "class_hash": "0x6dd8181e9e5a571c80803ab2adde6141f030decdef460106d757aa083f26a70",
-      "tag": "dojo_starter-Position",
-      "selector": "0x2ac8b4c190f7031b9fc44312e6b047a1dce0b3f2957c33a935ca7846a46dd5b"
+      "class_hash": "0x2d190086358f388c038a1b48a70d14487948549abc965f77fde653867e7d600",
+      "tag": "ashwood-ArmyUnitUsed",
+      "selector": "0x6c3367211657e2f54e917316d9c3ffd19d8dfb9ae65186a9fb808b820dbfbe0"
+    },
+    {
+      "members": [],
+      "class_hash": "0x5817bf912556a0b43212f63105d4f90eab1524409f700118fe6b385c4183c5b",
+      "tag": "ashwood-BattleField",
+      "selector": "0x3768d529408eff1b28cbd1641c0ced5f04f0e011eb79976a2c1b90f7435f71a"
+    },
+    {
+      "members": [],
+      "class_hash": "0x91e411e23b12015ee912ca0b2869ba1e6f3960dd0ddb17bf877509d883f8eb",
+      "tag": "ashwood-BattleFieldPosition",
+      "selector": "0x62457df788602779163d21582dbd74b5a7ae8e2649b92c3dd768251fca17512"
+    },
+    {
+      "members": [],
+      "class_hash": "0x43f675683d883f83aac5ef697c846dc6a5016be6d60473dabb451c33643dbbb",
+      "tag": "ashwood-BattleZone",
+      "selector": "0x7b728062e31b45c56de674f81771ef34ea898fafe8b7c4f20769dad3d9f8270"
+    },
+    {
+      "members": [],
+      "class_hash": "0x7fb67005840b0baed22842e808b83fc5d3573ea53bfad37ca3c116c0d55a169",
+      "tag": "ashwood-BattlefieldStats",
+      "selector": "0x4216e4b9c8f78d8feaa7930a77c76e3badefd6699d7ffc13176600bfcd956bd"
+    },
+    {
+      "members": [],
+      "class_hash": "0x4b62133a2575a22e5efbb9e0d4196be6d1bfcadff7ef88b1f2fca8f67585293",
+      "tag": "ashwood-Unit",
+      "selector": "0x4a8b4cee69da2f01294a4271364a8781c3b96190ed0dc6faf04d8005a7a77e9"
     }
   ],
   "events": [
     {
       "members": [],
-      "class_hash": "0xe7390da745519ad5484c14f6c32caef28e53ed496e78c086a0689bb2007112",
-      "tag": "dojo_starter-Moved",
-      "selector": "0x504403e5c02b6442527721fc464d9ea5fc8f1ee600ab5ccd5c0845d36fd45f1"
+      "class_hash": "0x286b79fc847d2c714bbee589b5de9e3b4df5ac90cc424eac2b97040e926767e",
+      "tag": "ashwood-ArmyCreated",
+      "selector": "0x69341c4dd8c556bfd4fe69044d4823de6f24e27f3b40e092e5698d15ac4e489"
+    },
+    {
+      "members": [],
+      "class_hash": "0x12fdcc101c813775ab4580285c618b78d356036a31d7ec8b02d543c894f04a3",
+      "tag": "ashwood-BattleCreated",
+      "selector": "0x343ee0fffd4e52f8eac077ddec5e1ef2cf16d01e662340d9d889ec2166641d1"
+    },
+    {
+      "members": [],
+      "class_hash": "0x73e226b5d7af8df6d0151f76dfb9b13511f9bea8e2dc2f1b2b814bbd48e42e9",
+      "tag": "ashwood-CombatCalculated",
+      "selector": "0x3e0c85ad3523fdbc2fe7a18a65072e06e5d1d6d9d545f5742c72f6672151f1a"
+    },
+    {
+      "members": [],
+      "class_hash": "0x7f18ebf7ed600cc884c3b5ec04ef2270c69f41fc32064df0f6be2565825185a",
+      "tag": "ashwood-UnitAttacked",
+      "selector": "0x7324c9e54c1a0d4ab2786410778564f772a8bd175331dea797cc4f29039f771"
+    },
+    {
+      "members": [],
+      "class_hash": "0x22df7fb87220d2e6ef8bd03beedc803550d8c1642a31d4b3efc21b2e117c2f3",
+      "tag": "ashwood-UnitCreated",
+      "selector": "0xb70c8f416b5a48f79ebac8239b3fa1991111543780f919a0d024979a43bbf6"
+    },
+    {
+      "members": [],
+      "class_hash": "0x3a39a21afd99d000aaeb8231adc850e6e0dc2ea26d4afe8134b9b0f43131126",
+      "tag": "ashwood-UnitDeployed",
+      "selector": "0x24379298237d04686a5d7f39aa8eaf4a98345221a0bfde6c9e555ca54e4c8f3"
+    },
+    {
+      "members": [],
+      "class_hash": "0x789ca3abedfae2a6a2a8323534a874e271079cf53afe32d47aa21c10ae32150",
+      "tag": "ashwood-UnitDeployedToBattle",
+      "selector": "0x222f983a784f69c3bcf97b198ff76afa4c84293e63198f0c5133129052e1fec"
+    },
+    {
+      "members": [],
+      "class_hash": "0x4632d8b9401b3f420a495a272705c53cd0b86d8ce54a537bbb31c6c0c25e6ec",
+      "tag": "ashwood-UnitEngagement",
+      "selector": "0x2cbca91778d9d995cfdd88ec65378a07542c8a85cb7501a13fa207d5ae41d42"
+    },
+    {
+      "members": [],
+      "class_hash": "0xa5e268a8f957798fa7158c1bd841cca74ac08f09e7a11bb9cc391e29d21c21",
+      "tag": "ashwood-UnitMoved",
+      "selector": "0x3a83ff5e0fd7cee287b4ff3ecfec8dcd6ca2fde9bc54119b49d560d3e738260"
+    },
+    {
+      "members": [],
+      "class_hash": "0x460901a2c1169a3c831b2f5059f8de6144a3a03d575614fa7916d6612acf13d",
+      "tag": "ashwood-UnitStatsUpdated",
+      "selector": "0x6c06e7c7963ff4dc5da06087452dadfc6e1d64a0e7d912c92af2c764145b73d"
     }
   ],
   "external_contracts": []

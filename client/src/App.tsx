@@ -1,17 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import BattleInterface from './pages/Arena'
+import { BrowserRouter, Route, Routes, Navigate, Link } from 'react-router-dom';
+import InitGame from "./InitGame";
+import AshwoodAbout from './components/About';
+
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
 
+ 
   return (
-    <>
-      <BattleInterface />
-    </>
-  )
+    <BrowserRouter>
+       
+        <Routes>
+            <Route path="/" element={<InitGame />} />
+            <Route path="/about" element={<AshwoodAbout />} />
+            <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+    </BrowserRouter>
+);
 }
 
-export default App
+export default App;

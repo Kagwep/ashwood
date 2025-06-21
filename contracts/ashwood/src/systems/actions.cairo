@@ -204,10 +204,10 @@ pub mod actions {
             };
             
             // Get unit positions - the attacker must belong to current player's army
-            let attacking_unit_position: ArmyUnitPosition = world.read_model((player, player_army_id, attacker_unit_id));
+            let mut attacking_unit_position: ArmyUnitPosition = world.read_model((player, player_army_id, attacker_unit_id));
             
             // The target unit belongs to the opponent's army
-            let target_unit_position: ArmyUnitPosition = world.read_model((opponent_commander, opponent_army_id, target_unit_id));
+            let mut target_unit_position: ArmyUnitPosition = world.read_model((opponent_commander, opponent_army_id, target_unit_id));
             
             // Validate season for the target position
             let position_and_season = self.validate_position_for_season(target_unit_position.position_index, season);

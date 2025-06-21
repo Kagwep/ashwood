@@ -34,6 +34,7 @@ pub struct ArmyUnitPosition {
     #[key]
     pub unit_id: u128,
     pub position_index: u8,
+    pub battlefield_id: u128,
 }
 
 #[generate_trait]
@@ -71,7 +72,8 @@ pub impl ArmyUnitPositionImpl of ArmyUnitPositionTrait {
             commander_id,
             army_id,
             unit_id,
-            position_index
+            position_index,
+            battlefield_id: 0,
         }
     }
 
