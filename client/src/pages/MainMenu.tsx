@@ -99,7 +99,7 @@ const AshwoodMainMenu = () => {
         );
 
         if (result && result.transaction_hash) {
-          toast.success(`${unitData.playerName} added to ashwood }`);
+          toast.success(`${unitData.playerName} added to ashwood `);
         }
       } catch (error: any) {
       const errorParsed = parseStarknetError(error);
@@ -221,7 +221,7 @@ const AshwoodMainMenu = () => {
         );
 
         if (result && result.transaction_hash) {
-          toast.success(`Unit added}`);
+          toast.success(`Unit added`);
         }
       } catch (error: any) {
       const errorParsed = parseStarknetError(error);

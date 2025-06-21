@@ -92,6 +92,8 @@ const BattleInterface: React.FC = () => {
     battleFields
   } = useGameStore();
 
+  const units = state.units;
+
   // Local UI state
   const [gameUIState, setGameUIState] = useState<GameUIState>({
     currentTurn: 1,
@@ -104,6 +106,10 @@ const BattleInterface: React.FC = () => {
 
   const [engagingUnit, setEngagingUnit] = useState<Unit | null>(null);
   const [targetUnit, setTargetUnit] = useState<Unit | null>(null);
+
+  console.log(defenderBattleUnitsDeployed)
+  console.log(invaderBattleUnitsDeployed)
+
 
   // Get current battlefield
   const selectedBattleField = battleFields[battle_id.toString()];
@@ -153,49 +159,62 @@ const BattleInterface: React.FC = () => {
   // Calculate available positions for current season
   const availablePositions = getAvailablePositions(gameUIState.currentSeason);
 
-  // Create battlefield grid from battle field positions
-  const battlefields = useMemo((): GridPosition[][] => {
-    return Array.from({ length: BATTLEFIELD_COUNT }, (_, battlefieldId) =>
-      Array.from({ length: POSITIONS_PER_BATTLEFIELD }, (_, position) => {
-        const globalPosition = battlefieldId * POSITIONS_PER_BATTLEFIELD + position + 1;
- 
-        
-        // Find unit at this position from battleFieldPositions
-        const unitAtPosition = Object.values(battleFieldPositions).find(
-          pos => pos.battlefield_id.toString() === battle_id.toString() && 
-                 pos.position.toString() === globalPosition.toString()
-        );
-        
-        // Get the actual unit data if there's a unit at this position
-        let unit: Unit | null = null;
-        let unitOwner: 'invader' | 'defender' | null = null;
-        
-        if (unitAtPosition && unitAtPosition.unit_id) {
-          // Check if it's an invader unit
-          const invaderUnit = Object.values(invaderBattleUnitsDeployed).find(u => u.id.toString() === unitAtPosition.unit_id.toString());
-          if (invaderUnit) {
-            unit = invaderUnit;
-            unitOwner = 'invader';
-          } else {
-            // Check if it's a defender unit
-            const defenderUnit = Object.values(defenderBattleUnitsDeployed).find(u => u.id.toString() === unitAtPosition.unit_id.toString());
-            if (defenderUnit) {
-              unit = defenderUnit;
+      // Create battlefield grid from battle field positions
+    // 🔧 FIXED: Battlefield grid with correct ownership logic
+    const battlefields = useMemo((): GridPosition[][] => {
+      return Array.from({ length: BATTLEFIELD_COUNT }, (_, battlefieldId) =>
+        Array.from({ length: POSITIONS_PER_BATTLEFIELD }, (_, position) => {
+          const globalPosition = battlefieldId * POSITIONS_PER_BATTLEFIELD + position + 1;
+
+          // Find unit at this position from battleFieldPositions
+          const unitAtPosition = Object.values(battleFieldPositions).find(
+            pos => pos.battlefield_id.toString() === battle_id.toString() && 
+                  pos.position.toString() === globalPosition.toString()
+          );
+          
+          let unit: Unit | null = null;
+          let unitOwner: 'invader' | 'defender' | null = null;
+          
+          if (unitAtPosition && unitAtPosition.unit_id && unitAtPosition.is_occupied) {
+            // 🔧 STEP 1: Determine ownership FIRST using the owner field
+            const ownerAddress = removeLeadingZeros(unitAtPosition.owner);
+            const invaderAddress = removeLeadingZeros(selectedBattleField?.invader_commander_id || '');
+            const defenderAddress = removeLeadingZeros(selectedBattleField?.defender_commander_id || '');
+            
+            if (ownerAddress === invaderAddress) {
+              unitOwner = 'invader';
+            } else if (ownerAddress === defenderAddress) {
               unitOwner = 'defender';
             }
+            
+            // 🔧 STEP 2: Get unit data from the CORRECT collection based on ownership
+            const unitId = unitAtPosition.unit_id.toString();
+            
+            if (unitOwner === 'invader') {
+              unit = invaderBattleUnitsDeployed[unitId] || units[unitId];
+            } else if (unitOwner === 'defender') {
+              unit = defenderBattleUnitsDeployed[unitId] || units[unitId];
+            }
+            
+            // Debug logging for unit collisions
+            if (unit) {
+              console.log(`Position ${globalPosition}: Unit ${unit.id} (${unit.player_name}) owned by ${unitOwner}`);
+            } else {
+              console.warn(`Unit ${unitId} not found for ${unitOwner} at position ${globalPosition}`);
+            }
           }
-        }
-        
-        return {
-          battlefieldId,
-          position,
-          globalPosition,
-          unit,
-          unitOwner
-        };
-      })
-    );
-  }, [battleFieldPositions, battle_id, invaderBattleUnitsDeployed, defenderBattleUnitsDeployed]);
+          
+          return {
+            battlefieldId,
+            position,
+            globalPosition,
+            unit,
+            unitOwner
+          };
+        })
+      );
+    }, [battleFieldPositions, battle_id, invaderBattleUnitsDeployed, defenderBattleUnitsDeployed, units, selectedBattleField]);
+
 
   // Smart contract interaction functions
   const handleDeployUnit = useCallback(async (unit: Unit, globalPosition: number, battle: BattleField) => {
@@ -461,8 +480,10 @@ const BattleInterface: React.FC = () => {
                                 ${gameUIState.currentPlayer === 1 
                                   ? 'bg-amber-700/80 border-amber-500 text-amber-100' 
                                   : 'bg-amber-800/80 border-amber-600 text-amber-100'
-                                }`}>
-                  Player {gameUIState.currentPlayer}
+                                }`}>  
+                <div className='bg-amber-200 p-1 rounded'>
+                  🏹 <span className=" text-sm text-red-600">{ isUserInvader && (selectedBattleField.current_turn as number) % 2 == 1 || isUserDefender && (selectedBattleField.current_turn as number) % 2 == 0?  'Your Turn': 'Opponets Turn'}</span>
+                </div>
                 </div>
                 
                 <div className="bg-amber-700/60 border border-amber-500 px-2 py-1 rounded-lg
@@ -661,9 +682,9 @@ const BattleInterface: React.FC = () => {
               {/* Season Info */}
               <div className={`px-3 py-1 rounded-lg bg-amber-800/80 border border-amber-600 font-semibold text-white text-sm
                               shadow-lg backdrop-blur-sm ${SEASON_COLORS[gameUIState.currentSeason]} mb-2`}>
-                Turn {gameUIState.currentTurn} - {SEASON_LABELS[getSeason(selectedBattleField.season as number)]}
+                Turn {selectedBattleField.current_turn} - {SEASON_LABELS[getSeason(selectedBattleField.season as number).toLowerCase()]}
                 <div className="text-xs opacity-80">
-                  {getTurnsLeftInSeason(selectedBattleField.season as number)} turns left
+                  {getTurnsLeftInSeason(selectedBattleField.season as number)} turns left for season
                 </div>
               </div>
               
@@ -716,6 +737,21 @@ const BattleInterface: React.FC = () => {
                             hover:scale-105 transition-all duration-200">
                   Ready Battle
                 </button>
+                <div className='px-3 py-1 bg-amber-800/80 border border-amber-600 rounded-lg '>
+                  Score
+                  { isUserInvader && (
+                    <div className='px-3 py-1 bg-amber-500/80 border border-amber-600 rounded-lg'>
+                    { `You ${selectedBattleField.invader_score} `}
+                     {` Opp ${selectedBattleField.defender_score}`}
+                  </div>
+                  )}
+                  { isUserDefender && (
+                    <div className='px-3 py-1 bg-amber-500/80 border border-amber-600 rounded-lg'>
+                    { `You ${selectedBattleField.defender_score} `}
+                     {` Opp ${selectedBattleField.invader_score}`}
+                  </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

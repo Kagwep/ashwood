@@ -99,13 +99,19 @@ pub mod actions {
             let mut battlefield_stats:BattlefieldStats = world.read_model(battlefield_id);
 
             assert(battlefield_stats.turns_remaining <= 120 , 'Game Ended');
+
+            let is_cross_border = self.is_cross_border(from_position,to_position);
+
+            if is_cross_border {
+                // Validate cross-border specific rules
+                let cross_border_validity = self.validate_cross_border_movement(battlefield_id, unit_id, from_position, to_position, player);
+                assert(cross_border_validity, 'Invalid Cross Move');
+            } else {
+                // Validate normal movement
+                let movement_validity = self.validate_movement(battlefield_id, unit_id, from_position, to_position, player);
+                assert(movement_validity, 'Invalid Move');
+            }
             
-       
-            // Validate movement
-            let movement_validity = self.validate_movement(battlefield_id, unit_id, from_position, to_position,player);
-
-            assert(movement_validity, 'Invalid Move');
-
             let season: SeasonType  = self.get_season(battle.season);
 
             let position_and_season = self.validate_position_for_season(to_position,season);
@@ -116,12 +122,17 @@ pub mod actions {
 
                         // Check if unit is already deployed
             let mut existing_unit_position: ArmyUnitPosition = world.read_model((player, army_id, unit_id));
+
+                        // update the  battfiled position 
+            let mut to_deploy_position: BattleFieldPosition = world.read_model((battlefield_id, to_position));
+            let mut to_deploy_from_position: BattleFieldPosition = world.read_model((battlefield_id, from_position));
+
+            assert(to_deploy_from_position.owner == player, 'Not Your Unit');
+            
             
             existing_unit_position.update_position(to_position);
 
-            // update the  battfiled position 
-            let mut to_deploy_position: BattleFieldPosition = world.read_model((battlefield_id, to_position));
-            let mut to_deploy_from_position: BattleFieldPosition = world.read_model((battlefield_id, from_position));
+
 
             if to_deploy_position.army_id == 0 {
               world.write_model(
@@ -157,6 +168,8 @@ pub mod actions {
             // impliment validate supply - needed?
             
             world.write_model(@to_deploy_from_position);
+
+             battle.advance_turn();
 
             battle.status = BattleStatus::Strategizing;
 
@@ -210,6 +223,10 @@ pub mod actions {
             
             // Get unit positions - the attacker must belong to current player's army
             let mut attacking_unit_position: ArmyUnitPosition = world.read_model((player, player_army_id, attacker_unit_id));
+
+            let mut attacking_position: BattleFieldPosition = world.read_model((battlefield_id, attacking_unit_position.position_index));
+
+            assert(attacking_position.owner == player, 'Not Your Unit');
             
             // The target unit belongs to the opponent's army
             let mut target_unit_position: ArmyUnitPosition = world.read_model((opponent_commander, opponent_army_id, target_unit_id));
@@ -219,16 +236,19 @@ pub mod actions {
             // Validate season for the target position
             let position_and_season = self.validate_position_for_season(target_unit_position.position_index, season);
             assert(position_and_season, 'Not Season');
-            
-            // Validate attack movement
-            let attack_movement_validity = self.validate_movement(
-                battlefield_id, 
-                attacker_unit_id, 
-                attacking_unit_position.position_index, 
-                target_unit_position.position_index,
-                player
-            );
-            assert(attack_movement_validity, 'Invalid Move');
+
+            let is_cross_border = self.is_cross_border(attacking_unit_position.position_index, target_unit_position.position_index);
+
+            if is_cross_border {
+                // Validate cross-border attack
+                let cross_border_attack_validity = self.validate_cross_border_attack(battlefield_id, attacker_unit_id, attacking_unit_position.position_index, target_unit_position.position_index, player);
+                assert(cross_border_attack_validity, 'Invalid Cross Attack');
+            } else {
+                // Validate normal attack
+                let attack_validity = self.validate_attack_movement(battlefield_id, attacker_unit_id, attacking_unit_position.position_index, target_unit_position.position_index, player);
+                assert(attack_validity, 'Invalid Attack');
+            }
+        
             
             // Get unit stats
             let attacker_unit: Unit = world.read_model(attacker_unit_id);
@@ -381,6 +401,11 @@ pub mod actions {
             assert(battle.is_player_turn(player), 'Not your turn');
             let mut battlefield_stats: BattlefieldStats = world.read_model(battlefield_id);
             assert(battlefield_stats.turns_remaining > 0, 'Game Ended');
+
+            let mut  unit_position: ArmyUnitPosition = world.read_model((player, army_id, unit_id));
+            let mut retreating_position: BattleFieldPosition = world.read_model((battlefield_id, unit_position.position_index));
+
+            assert(retreating_position.owner == player, 'Not Your Unit');
             
             // Determine which side is retreating
             let player_army_id = if player == battle.invader_commander_id {
@@ -457,6 +482,39 @@ pub mod actions {
             
             // Validate movement based on unit class
             match unit.unit_class {
+                UnitClass::Infantry => self.validate_infantry_movement(from_position, to_position),
+                UnitClass::Pike => self.validate_pike_movement( battlefield_id,from_position, to_position,player),
+                UnitClass::Archer => self.validate_archer_movement(from_position, to_position),
+                UnitClass::Cavalry => self.validate_cavalry_movement(battlefield_id, from_position, to_position),
+                UnitClass::Elite => self.validate_elite_movement(from_position, to_position),
+                UnitClass::Support => self.validate_support_movement(from_position, to_position),
+            }
+        }
+
+        fn validate_attack_movement(
+            self: @ContractState,
+            battlefield_id: u128,
+            unit_id: u128,
+            from_position: u8,
+            to_position: u8,
+            player: ContractAddress
+        ) -> bool {
+            let world = self.world_default();
+            
+            // Get unit to check its class
+            let unit: Unit = world.read_model(unit_id);
+            if unit.id == 0 {
+                return false; // Unit doesn't exist
+            }
+            
+            // Check if destination is occupied (REQUIRED for attacks)
+            let destination: BattleFieldPosition = world.read_model((battlefield_id, to_position));
+            if !destination.is_occupied {
+                return false; // No target to attack
+            }
+            
+            // Validate attack range based on unit class
+          match unit.unit_class {
                 UnitClass::Infantry => self.validate_infantry_movement(from_position, to_position),
                 UnitClass::Pike => self.validate_pike_movement( battlefield_id,from_position, to_position,player),
                 UnitClass::Archer => self.validate_archer_movement(from_position, to_position),
@@ -754,6 +812,135 @@ pub mod actions {
                SeasonType::Prime
             }  else {
                 SeasonType::None
+            }
+        }
+        fn is_cross_border(
+                self: @ContractState,
+                from_position: u8,
+                to_position: u8
+            ) -> bool {
+                self.is_border_1_to_10(from_position, to_position) ||
+                self.is_border_10_to_19(from_position, to_position) ||
+                self.is_border_1_to_28(from_position, to_position) ||
+                self.is_border_10_to_37(from_position, to_position) ||
+                self.is_border_19_to_46(from_position, to_position) ||
+                self.is_border_28_to_37(from_position, to_position) ||
+                self.is_border_37_to_46(from_position, to_position)
+            }
+
+            fn is_border_1_to_10(self: @ContractState, from: u8, to: u8) -> bool {
+                (from == 3 && to == 10) || (from == 10 && to == 3) ||
+                (from == 6 && to == 13) || (from == 13 && to == 6) ||
+                (from == 9 && to == 16) || (from == 16 && to == 9)
+            }
+
+            fn is_border_10_to_19(self: @ContractState, from: u8, to: u8) -> bool {
+                (from == 12 && to == 19) || (from == 19 && to == 12) ||
+                (from == 15 && to == 22) || (from == 22 && to == 15) ||
+                (from == 18 && to == 25) || (from == 25 && to == 18)
+            }
+
+            fn is_border_1_to_28(self: @ContractState, from: u8, to: u8) -> bool {
+                (from == 7 && to == 28) || (from == 28 && to == 7) ||
+                (from == 8 && to == 29) || (from == 29 && to == 8) ||
+                (from == 9 && to == 30) || (from == 30 && to == 9)
+            }
+
+            fn is_border_10_to_37(self: @ContractState, from: u8, to: u8) -> bool {
+                (from == 16 && to == 37) || (from == 37 && to == 16) ||
+                (from == 17 && to == 38) || (from == 38 && to == 17) ||
+                (from == 18 && to == 39) || (from == 39 && to == 18)
+            }
+
+            fn is_border_19_to_46(self: @ContractState, from: u8, to: u8) -> bool {
+                (from == 25 && to == 46) || (from == 46 && to == 25) ||
+                (from == 26 && to == 47) || (from == 47 && to == 26) ||
+                (from == 27 && to == 48) || (from == 48 && to == 27)
+            }
+
+            fn is_border_28_to_37(self: @ContractState, from: u8, to: u8) -> bool {
+                (from == 30 && to == 37) || (from == 37 && to == 30) ||
+                (from == 33 && to == 40) || (from == 40 && to == 33) ||
+                (from == 36 && to == 43) || (from == 43 && to == 36)
+            }
+
+            fn is_border_37_to_46(self: @ContractState, from: u8, to: u8) -> bool {
+                (from == 39 && to == 46) || (from == 46 && to == 39) ||
+                (from == 42 && to == 49) || (from == 49 && to == 42) ||
+                (from == 45 && to == 52) || (from == 52 && to == 45)
+            }
+        fn validate_cross_border_movement(
+            self: @ContractState,
+            battlefield_id: u128,
+            unit_id: u128,
+            from_position: u8,
+            to_position: u8,
+            player: ContractAddress
+        ) -> bool {
+            let world = self.world_default();
+            
+            // 1. Check unit exists
+            let unit: Unit = world.read_model(unit_id);
+            if unit.id == 0 {
+                return false;
+            }
+            
+            // 2. Check destination is not occupied
+            let destination: BattleFieldPosition = world.read_model((battlefield_id, to_position));
+            if destination.is_occupied {
+                return false;
+            }
+            
+            // 3. Verify it's a valid cross-border pair
+            if !self.is_cross_border(from_position, to_position) {
+                return false;
+            }
+            
+            // 4. Unit-specific cross-border rules
+            match unit.unit_class {
+                UnitClass::Pike => true,
+                UnitClass::Infantry => true,  // Can cross freely
+                UnitClass::Archer => true,   // Can cross freely  
+                UnitClass::Cavalry => true,  // Can cross freely (but only 1 tile, not 2)
+                UnitClass::Elite => true,    // Can cross freely
+                UnitClass::Support => true,  // Can cross freely
+            }
+        }
+        fn validate_cross_border_attack(
+            self: @ContractState,
+            battlefield_id: u128,
+            unit_id: u128,
+            from_position: u8,
+            to_position: u8,
+            player: ContractAddress
+        ) -> bool {
+            let world = self.world_default();
+            
+            // 1. Check unit exists
+            let unit: Unit = world.read_model(unit_id);
+            if unit.id == 0 {
+                return false;
+            }
+            
+            // 2. Check destination is not occupied
+            let destination: BattleFieldPosition = world.read_model((battlefield_id, to_position));
+            if !destination.is_occupied {
+                return false;
+            }
+            
+            // 3. Verify it's a valid cross-border pair
+            if !self.is_cross_border(from_position, to_position) {
+                return false;
+            }
+            
+            // 4. Unit-specific cross-border rules
+            match unit.unit_class {
+                UnitClass::Pike => true,
+                UnitClass::Infantry => true,  // Can cross freely
+                UnitClass::Archer => true,   // Can cross freely  
+                UnitClass::Cavalry => true,  // Can cross freely (but only 1 tile, not 2)
+                UnitClass::Elite => true,    // Can cross freely
+                UnitClass::Support => true,  // Can cross freely
             }
         }
     }
