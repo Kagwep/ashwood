@@ -100,6 +100,10 @@ pub mod actions {
 
             assert(battlefield_stats.turns_remaining <= 120 , 'Game Ended');
 
+            let army_unit_used_status:ArmyUnitUsed = world.read_model(player,army_id,battlefield_id,unit_id);
+
+            assert(army_unit_used_status.turn == 0, 'Unit eliminated');
+
             let is_cross_border = self.is_cross_border(from_position,to_position);
 
             if is_cross_border {
@@ -207,6 +211,8 @@ pub mod actions {
             let mut battlefield_stats:BattlefieldStats = world.read_model(battlefield_id);
 
             assert(battlefield_stats.turns_remaining <= 120 , 'Game Ended');
+
+            
             
             // Determine which army the current player controls
             let (player_army_id, opponent_army_id) = if player == battle.invader_commander_id {
@@ -220,6 +226,10 @@ pub mod actions {
             } else {
                 battle.invader_commander_id
             };
+
+            let army_unit_used_status:ArmyUnitUsed = world.read_model(player,player_army_id,battlefield_id,attacker_unit_id);
+
+            assert(army_unit_used_status.turn == 0, 'Unit eliminated');
             
             // Get unit positions - the attacker must belong to current player's army
             let mut attacking_unit_position: ArmyUnitPosition = world.read_model((player, player_army_id, attacker_unit_id));

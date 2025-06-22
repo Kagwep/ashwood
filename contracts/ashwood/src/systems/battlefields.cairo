@@ -207,7 +207,7 @@ pub mod battlefields {
             
             // Check if unit is already deployed
             let existing_position: ArmyUnitPosition = world.read_model((player, army_id, unit_id));
-            assert(!existing_position.is_deployed() && existing_position.battlefield_id == battlefield_id, 'Unit already deployed');
+            assert(!existing_position.is_deployed() , 'Unit already deployed');
             
             // Check if position is occupied by checking all armies in battle
             let to_deploy_position: BattleFieldPosition = world.read_model((battlefield_id, global_position));

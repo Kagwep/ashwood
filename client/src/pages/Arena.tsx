@@ -89,7 +89,8 @@ const BattleInterface: React.FC = () => {
     invaderBattleUnitsDeployed,
     defenderBattleUnitsDeployed,
     battleFieldPositions,
-    battleFields
+    battleFields,
+    armyUnitsUsed
   } = useGameStore();
 
   const units = state.units;
@@ -123,7 +124,7 @@ const BattleInterface: React.FC = () => {
     return TURNS_PER_SEASON - ((turn - 1) % TURNS_PER_SEASON);
   };
 
-  const getAvailablePositions = (season: 'odd' | 'even' | 'prime'): number[] => {
+  const getAvailablePositions = (season: any): number[] => {
     const allPositions = Array.from({ length: TOTAL_POSITIONS }, (_, i) => i + 1);
     
     switch (season) {
@@ -137,6 +138,39 @@ const BattleInterface: React.FC = () => {
         return allPositions;
     }
   };
+
+  // Add this helper function in your component before the return statement
+const getSlotStyling = (slot, canPlace) => {
+  if (slot.unit) {
+    return slot.unitOwner === 'invader'
+      ? 'border-red-400 bg-red-400/30 shadow-lg'
+      : 'border-blue-400 bg-blue-400/30 shadow-lg';
+  }
+  
+  if (canPlace) {
+    return 'border-amber-400 bg-amber-400/20 hover:bg-amber-400/30 hover:scale-105';
+  }
+  
+  // Season-based highlighting for empty slots - maintaining amber theme with subtle variations
+  const currentSeason = getSeason(selectedBattleField.season as number).toLowerCase();
+  const isAvailableInSeason = availablePositions.includes(slot.globalPosition);
+  
+  if (isAvailableInSeason) {
+    switch (currentSeason) {
+      case 'prime':
+        return 'border-dashed border-amber-300 bg-amber-300/25 hover:border-amber-200 hover:bg-amber-300/35 shadow-amber-400/30 ring-2 ring-amber-300/60';
+      case 'odd':
+        return 'border-dashed border-amber-500 bg-amber-500/20 hover:border-amber-400 hover:bg-amber-500/30 shadow-amber-600/25 ring-1 ring-amber-500/50';
+      case 'even':
+        return 'border-dashed border-amber-600 bg-amber-600/15 hover:border-amber-500 hover:bg-amber-600/25 shadow-amber-700/20 ring-1 ring-amber-600/40';
+      default:
+        return 'border-dashed border-amber-600 bg-amber-600/10 hover:border-amber-400 hover:bg-amber-400/20';
+    }
+  } else {
+    // Grayed out for positions not available in current season
+    return 'border-dashed border-amber-800 bg-amber-900/10 opacity-30 cursor-not-allowed';
+  }
+};
 
   const getCardBackgroundImage = (unit: Unit, playerId: number) => {
     if (!unit) return '';
@@ -157,63 +191,78 @@ const BattleInterface: React.FC = () => {
   };
 
   // Calculate available positions for current season
-  const availablePositions = getAvailablePositions(gameUIState.currentSeason);
+  const availablePositions = getAvailablePositions(getSeason(selectedBattleField.season as number).toLowerCase());
 
       // Create battlefield grid from battle field positions
     // 🔧 FIXED: Battlefield grid with correct ownership logic
-    const battlefields = useMemo((): GridPosition[][] => {
-      return Array.from({ length: BATTLEFIELD_COUNT }, (_, battlefieldId) =>
-        Array.from({ length: POSITIONS_PER_BATTLEFIELD }, (_, position) => {
-          const globalPosition = battlefieldId * POSITIONS_PER_BATTLEFIELD + position + 1;
-
-          // Find unit at this position from battleFieldPositions
-          const unitAtPosition = Object.values(battleFieldPositions).find(
-            pos => pos.battlefield_id.toString() === battle_id.toString() && 
-                  pos.position.toString() === globalPosition.toString()
-          );
-          
-          let unit: Unit | null = null;
-          let unitOwner: 'invader' | 'defender' | null = null;
-          
-          if (unitAtPosition && unitAtPosition.unit_id && unitAtPosition.is_occupied) {
-            // 🔧 STEP 1: Determine ownership FIRST using the owner field
-            const ownerAddress = removeLeadingZeros(unitAtPosition.owner);
-            const invaderAddress = removeLeadingZeros(selectedBattleField?.invader_commander_id || '');
-            const defenderAddress = removeLeadingZeros(selectedBattleField?.defender_commander_id || '');
-            
-            if (ownerAddress === invaderAddress) {
-              unitOwner = 'invader';
-            } else if (ownerAddress === defenderAddress) {
-              unitOwner = 'defender';
-            }
-            
-            // 🔧 STEP 2: Get unit data from the CORRECT collection based on ownership
-            const unitId = unitAtPosition.unit_id.toString();
-            
-            if (unitOwner === 'invader') {
-              unit = invaderBattleUnitsDeployed[unitId] || units[unitId];
-            } else if (unitOwner === 'defender') {
-              unit = defenderBattleUnitsDeployed[unitId] || units[unitId];
-            }
-            
-            // Debug logging for unit collisions
-            if (unit) {
-              console.log(`Position ${globalPosition}: Unit ${unit.id} (${unit.player_name}) owned by ${unitOwner}`);
-            } else {
-              console.warn(`Unit ${unitId} not found for ${unitOwner} at position ${globalPosition}`);
-            }
+const battlefields = useMemo((): GridPosition[][] => {
+  return Array.from({ length: BATTLEFIELD_COUNT }, (_, battlefieldId) =>
+    Array.from({ length: POSITIONS_PER_BATTLEFIELD }, (_, position) => {
+      const globalPosition = battlefieldId * POSITIONS_PER_BATTLEFIELD + position + 1;
+      
+      // Find unit at this position from battleFieldPositions
+      const unitAtPosition = Object.values(battleFieldPositions).find(
+        pos => pos.battlefield_id.toString() === battle_id.toString() && 
+               pos.position.toString() === globalPosition.toString()
+      );
+      
+      let unit: Unit | null = null;
+      let unitOwner: 'invader' | 'defender' | null = null;
+      
+      if (unitAtPosition && unitAtPosition.unit_id && unitAtPosition.is_occupied) {
+        // 🔧 STEP 1: Determine ownership FIRST using the owner field
+        const ownerAddress = removeLeadingZeros(unitAtPosition.owner);
+        const invaderAddress = removeLeadingZeros(selectedBattleField?.invader_commander_id || '');
+        const defenderAddress = removeLeadingZeros(selectedBattleField?.defender_commander_id || '');
+        
+        if (ownerAddress === invaderAddress) {
+          unitOwner = 'invader';
+        } else if (ownerAddress === defenderAddress) {
+          unitOwner = 'defender';
+        }
+        
+        // 🔧 STEP 2: Check if unit is eliminated before showing it
+        const unitId = unitAtPosition.unit_id.toString();
+        const armyId = unitAtPosition.army_id.toString();
+        
+        // Check if unit is eliminated/used
+        const isUnitEliminated = Object.values(armyUnitsUsed).some(usedUnit => 
+          usedUnit.unit_id.toString() === unitId &&
+          usedUnit.battlefield_id.toString() === battle_id.toString() &&
+          usedUnit.army_id.toString() === armyId &&
+          removeLeadingZeros(usedUnit.commander_id) === ownerAddress &&
+          usedUnit.turn.toString() !== "0" // turn != 0 means eliminated
+        );
+        
+        // 🔧 STEP 3: Only show unit if it's NOT eliminated
+        if (!isUnitEliminated) {
+          if (unitOwner === 'invader') {
+            unit = invaderBattleUnitsDeployed[unitId] || units[unitId];
+          } else if (unitOwner === 'defender') {
+            unit = defenderBattleUnitsDeployed[unitId] || units[unitId];
           }
           
-          return {
-            battlefieldId,
-            position,
-            globalPosition,
-            unit,
-            unitOwner
-          };
-        })
-      );
-    }, [battleFieldPositions, battle_id, invaderBattleUnitsDeployed, defenderBattleUnitsDeployed, units, selectedBattleField]);
+          // Debug logging
+          if (unit) {
+            console.log(`Position ${globalPosition}: Unit ${unit.id} (${unit.player_name}) owned by ${unitOwner}`);
+          } else {
+            console.warn(`Unit ${unitId} not found for ${unitOwner} at position ${globalPosition}`);
+          }
+        } else {
+          console.log(`Position ${globalPosition}: Unit ${unitId} eliminated - position is now free`);
+        }
+      }
+      
+      return {
+        battlefieldId,
+        position,
+        globalPosition,
+        unit,
+        unitOwner
+      };
+    })
+  );
+}, [battleFieldPositions, battle_id, invaderBattleUnitsDeployed, defenderBattleUnitsDeployed, units, selectedBattleField, armyUnitsUsed]);
 
 
   // Smart contract interaction functions
@@ -363,7 +412,7 @@ const BattleInterface: React.FC = () => {
         
         if (currentPosition) {
           // Move unit
-          console.log("global",globalPos)
+          console.log("global",globalPos,currentPosition.position.toString())
           handleMoveUnit(selectedUnit, parseInt(currentPosition.position.toString()), globalPos);
         }
       } else {
@@ -590,14 +639,7 @@ const BattleInterface: React.FC = () => {
                           className={`w-16 h-16 lg:w-20 lg:h-20 border-2 rounded-lg relative 
                                       transition-all duration-300 cursor-pointer
                                       flex items-center justify-center text-xs overflow-hidden
-                                      ${slot.unit 
-                                        ? slot.unitOwner === 'invader'
-                                          ? 'border-red-400 bg-red-400/30 shadow-lg'
-                                          : 'border-blue-400 bg-blue-400/30 shadow-lg'
-                                        : canPlace
-                                          ? 'border-amber-400 bg-amber-400/20 hover:bg-amber-400/30 hover:scale-105'
-                                          : 'border-dashed border-amber-600 bg-amber-600/10 hover:border-amber-400 hover:bg-amber-400/20'
-                                      }`}
+                                      ${getSlotStyling(slot, canPlace)}`}
                                   style={{
                                   backgroundImage: slot.unit 
                                       ? `url('${getCardBackgroundImage(slot.unit, slot.unitOwner === 'invader' ? 1 : 2)}')`
@@ -741,14 +783,14 @@ const BattleInterface: React.FC = () => {
                   Score
                   { isUserInvader && (
                     <div className='px-3 py-1 bg-amber-500/80 border border-amber-600 rounded-lg'>
-                    { `You ${selectedBattleField.invader_score} `}
-                     {` Opp ${selectedBattleField.defender_score}`}
+                    <span>{ `You:`} <span className='p-1 text-green-600'>{selectedBattleField.invader_score}</span></span>
+                    <span> {` Opp:`}  <span className='p-1 text-red-600'>{selectedBattleField.defender_score}</span></span>
                   </div>
                   )}
                   { isUserDefender && (
                     <div className='px-3 py-1 bg-amber-500/80 border border-amber-600 rounded-lg'>
-                    { `You ${selectedBattleField.defender_score} `}
-                     {` Opp ${selectedBattleField.invader_score}`}
+                    <span> {` You: `}  <span className='p-1 text-green-600'>{selectedBattleField.defender_score}</span></span>
+                     <span>{ `Opp: `} <span className='p-1 text-red-600'>{selectedBattleField.invader_score}</span></span>
                   </div>
                   )}
                 </div>
