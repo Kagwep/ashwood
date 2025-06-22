@@ -20,41 +20,42 @@ export function StarknetProvider({ children, network }: StarknetProviderProps) {
   const networkConstants = getNetworkConstants(network);
   console.log("StarknetProvider using network:", network);
   
+  
   // Define session policies
   const policies: SessionPolicies = {
     contracts: {
       [networkConstants.ACTIONS_ADDRESS]: {
         methods: [
-          { entrypoint: "commit" },
-          { entrypoint: "reveal" },
-          { entrypoint: "substitute_player" },
-          { entrypoint: "use_tactic_card" },
+        { entrypoint: "move_unit" },
+        { entrypoint: "attack_unit" },
+        { entrypoint: "retreat_unit" },
         ],
       },
-      [networkConstants.PLAYERS_ADDRESS]: {
+      [networkConstants.UNITS_ADDRESS]: {
         methods: [
-          { entrypoint: "create_card" },
-          { entrypoint: "update_stats" },
-          { entrypoint: "update_rarity" },
-          { entrypoint: "create_special_ability" },
+        { entrypoint: "create_unit" },
+        { entrypoint: "update_unit_stats" },
+        { entrypoint: "check_advantage" },
+        { entrypoint: "is_ranged" },
+        { entrypoint: "can_support" }
         ],
       },
-      [networkConstants.SQUAD_ADDRESS]: {
+      [networkConstants.ARMIES_ADDRESS]: {
         methods: [
-          { entrypoint: "create_squad" },
-          { entrypoint: "change_formation" },
-          { entrypoint: "add_card_to_position" },
-          { entrypoint: "replace_card_to_position" },
-          { entrypoint: "remove_card_from_position" },
-          { entrypoint: "rename_squad" },
-          { entrypoint: "calculate_chemistry" },
+        { entrypoint: "create_army" },
+        { entrypoint: "rename_army" },
+        { entrypoint: "add_unit_to_army" },
+        { entrypoint: "remove_unit_from_army" },
+        { entrypoint: "mark_unit_used" },
+        { entrypoint: "is_unit_used_this_turn" },
         ],
       },
-      [networkConstants.TMATCH_ADDRESS]: {
+      [networkConstants.BATTLEFIELDS_ADDRESS]: {
         methods: [
-          { entrypoint: "create_match" },
-          { entrypoint: "start_match" },
-          { entrypoint: "join_match" },
+          { entrypoint: "create_battle" },
+          { entrypoint: "join_battle" },
+          { entrypoint: "start_battle" },
+          { entrypoint: "deploy_unit_to_battlefield" },
         ],
       },
     },
@@ -62,7 +63,7 @@ export function StarknetProvider({ children, network }: StarknetProviderProps) {
   
   const colorMode: ColorMode = "dark";
   const theme = "";
-  const namespace = "touchline";
+  const namespace = "ashwood";
   
   const getChainIdForNetwork = (networkValue: Network) => {
     switch (networkValue) {

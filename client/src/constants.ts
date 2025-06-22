@@ -32,9 +32,9 @@ export const KATANA = {
     TORII_RPC_URL: "", // Default Katana RPC
     TORII_URL: "http://localhost:8080",
     ACTIONS_ADDRESS: "0x0",
-    PLAYERS_ADDRESS: "0x0",
-    SQUAD_ADDRESS: "0x0",
-    TMATCH_ADDRESS: "0x0",
+    UNITS_ADDRESS: "0x0",
+    BATTLEFIELDS_ADDRESS: "0x0",
+    ARMIES_ADDRESS: "0x0",
     WORLD_ADDRESS: MANIFEST_DEV.world.address,
     MANIFEST: MANIFEST_DEV,  
   };
