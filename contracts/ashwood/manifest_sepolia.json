@@ -1,9 +1,9 @@
 {
   "world": {
     "class_hash": "0x75fc75bcd1a7f8b4bf64b74978b0f89c8cee44bb755c1dae6f82284756451ec",
-    "address": "0x4d1a420f1cd9650b71ae9ce4274cf8009aafd1dbeac7a548773f49f842f6f7d",
-    "seed": "ashwood",
-    "name": "Dojo starter",
+    "address": "0x47ef84cdd65b0d12617b10998cd6379e254fd522501049474ae44fac98ec5de",
+    "seed": "ashwood_2",
+    "name": "Ashwood",
     "entrypoints": [
       "uuid",
       "set_metadata",
@@ -1312,7 +1312,7 @@
   },
   "contracts": [
     {
-      "address": "0x4d323215f51a7a7fd9064bb5a80e58d887fe11f6be139165fd1715e45dfe4b9",
+      "address": "0x6b744826059f537ed183edd16b263f0431aeee5725cfce99019c8790420f885",
       "class_hash": "0x37e29859e42bb073071bd0c0e4fcbab87c7d832efeadfc0e818f6207197d00e",
       "abi": [
         {
@@ -1570,7 +1570,7 @@
       ]
     },
     {
-      "address": "0x6019c037549973444434de3d636d98e3a37a2614786747d05f960a8b2d7c451",
+      "address": "0x75ba92740c3772962a7b9b980a052167ba2955f1cc0b358c7bcc877c29e37ed",
       "class_hash": "0x5c92cd39b09724f8e1a475a20f15fb851cf645ff80c4f0784969e163f3b5ee2",
       "abi": [
         {
@@ -1893,7 +1893,7 @@
       ]
     },
     {
-      "address": "0x53b141cbfb2a620d4ec47ff9bb9abedbb73e632027feead3d4d8e94254b119f",
+      "address": "0x1cf1dadd01c4c1df4173649d337195096aada05f55ee208a4c09f5afafd3d71",
       "class_hash": "0x46f1f7b22e86b30dca5734fd0fc1c6245dd45c28a9a7d9d613e0ce22eb99dcc",
       "abi": [
         {
@@ -2156,7 +2156,7 @@
       ]
     },
     {
-      "address": "0x43675e7e440939077fff15236ec209941dcf452fc70b1b701fb701c99b0794",
+      "address": "0x6999e7940f0ad1cbae1ce634443f376245bf1759398721e76912b5b88a4ab5d",
       "class_hash": "0x1f4fb3b897c93cd355919f960a8dfdc0b00aa443553eeb96e3876ac4ce49691",
       "abi": [
         {

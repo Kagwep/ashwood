@@ -100,7 +100,7 @@ pub mod actions {
 
             assert(battlefield_stats.turns_remaining <= 120 , 'Game Ended');
 
-            let army_unit_used_status:ArmyUnitUsed = world.read_model(player,army_id,battlefield_id,unit_id);
+            let army_unit_used_status:ArmyUnitUsed = world.read_model((player,army_id,battlefield_id,unit_id));
 
             assert(army_unit_used_status.turn == 0, 'Unit eliminated');
 
@@ -227,7 +227,7 @@ pub mod actions {
                 battle.invader_commander_id
             };
 
-            let army_unit_used_status:ArmyUnitUsed = world.read_model(player,player_army_id,battlefield_id,attacker_unit_id);
+            let army_unit_used_status:ArmyUnitUsed = world.read_model((player,player_army_id,battlefield_id,attacker_unit_id));
 
             assert(army_unit_used_status.turn == 0, 'Unit eliminated');
             

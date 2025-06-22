@@ -3,16 +3,16 @@
 default = "ashwood"
 
 [env]
-account_address = "0x0215AF1A59d8ba6D49e4cc965bE8BfCd6Cbd86E0AbE758B32a82BDB353B749dE"
+account_address = "0x0785f4ffe231e0df381c83a16e9f8b696c21a1b492b93412f8c186a337e3cdb7"
 private_key = ""
 rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
 
 [world]
-seed = "touchline_1"
-name = "Touchline"
+seed = "ashwood_2"
+name = "Ashwood"
 description = "Become a manager"
 cover_uri = "file://assets/bg.webp"
-website = "https://command-nexus.vercel.app/"
+website = "https://ashwood.vercel.app/"
 
 
 [writers]
