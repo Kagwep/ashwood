@@ -606,7 +606,7 @@ const AshwoodMainMenu = () => {
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-amber-300">🪖 Unit Barracks</h2>
                 <div >
-                                <button
+                                {/* <button
                 onClick={() => setIsModalOpenUnit(true)}
                 className="px-6 mx-2 py-3 bg-gradient-to-r from-amber-700 to-amber-600 
                           border-2 border-amber-500 rounded-lg font-bold text-amber-100
@@ -614,7 +614,7 @@ const AshwoodMainMenu = () => {
                           transition-all duration-300 shadow-lg"
               >
                 🏰 Add Unit
-              </button>
+              </button> */}
                             <button
                 onClick={() => setIsModalOpen(true)}
                 className="px-6 py-3 bg-gradient-to-r from-amber-700 to-amber-600 
