@@ -74,12 +74,12 @@ const GameRulesModal = ({ isOpen, onClose }) => {
         <div className="bg-red-900/80 border border-red-500 m-4 p-3 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle className="w-5 h-5 text-red-400" />
-            <span className="font-semibold text-red-200">Known Issue - Feedback Bug</span>
+            <span className="font-semibold text-red-200">Known Issue - RPC Feedback Bug</span>
           </div>
           <p className="text-red-200 text-sm">
             If your action shows "success" in the toast but nothing changes on the battlefield, 
             you have violated game rules and the contract rejected your move. (We're fixing the 
-            feedback issue) that prevents proper error messages.
+           feedback issue that prevents proper error messages).
           </p>
         </div>
 
@@ -94,6 +94,16 @@ const GameRulesModal = ({ isOpen, onClose }) => {
             }`}>
             <Move className="w-4 h-4 inline mr-2" />
             Movement Rules
+          </button>
+          <button
+            onClick={() => setActiveTab('seasonal')}
+            className={`px-4 py-2 font-medium transition-colors ${
+              activeTab === 'seasonal'
+                ? 'text-amber-100 border-b-2 border-amber-400'
+                : 'text-amber-300 hover:text-amber-100'
+            }`}>
+            🌟
+            Seasonal Effects
           </button>
           <button
             onClick={() => setActiveTab('general')}
@@ -146,6 +156,178 @@ const GameRulesModal = ({ isOpen, onClose }) => {
                   <li><strong>Forward only:</strong> Pike units are very directional</li>
                 </ul>
               </div>
+
+              <div className="bg-orange-700/40 border border-orange-500 rounded-lg p-4 mt-4">
+                <h4 className="font-semibold text-orange-100 mb-2">🌉 Cross-Border Movement</h4>
+                <p className="text-sm text-orange-200 mb-2">
+                  Units can only cross between battlefields through specific directly opposite border positions:
+                </p>
+                <div className="grid grid-cols-2 gap-2 text-xs text-orange-200">
+                  <div>
+                    <strong>Battlefield 1 ↔ 2:</strong>
+                    <div>3↔10, 6↔13, 9↔16</div>
+                  </div>
+                  <div>
+                    <strong>Battlefield 2 ↔ 3:</strong>
+                    <div>12↔19, 15↔22, 18↔25</div>
+                  </div>
+                  <div>
+                    <strong>Battlefield 1 ↔ 4:</strong>
+                    <div>7↔28, 8↔29, 9↔30</div>
+                  </div>
+                  <div>
+                    <strong>Battlefield 2 ↔ 5:</strong>
+                    <div>16↔37, 17↔38, 18↔39</div>
+                  </div>
+                  <div>
+                    <strong>Battlefield 3 ↔ 6:</strong>
+                    <div>25↔46, 26↔47, 27↔48</div>
+                  </div>
+                  <div>
+                    <strong>Battlefield 4 ↔ 5:</strong>
+                    <div>30↔37, 33↔40, 36↔43</div>
+                  </div>
+                  <div>
+                    <strong>Battlefield 5 ↔ 6:</strong>
+                    <div>39↔46, 42↔49, 45↔52</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'seasonal' && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-amber-200 mb-4">Seasonal Effects System</h3>
+              
+              {/* Winter */}
+              <div className="bg-blue-900/40 border border-blue-500 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-200 mb-3 flex items-center gap-2">
+                  ❄️ Winter (Odd Positions) - Cold, harsh, icy terrain
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                  <div className="bg-blue-800/30 rounded p-2">
+                    <strong className="text-blue-200">🪖 Infantry:</strong>
+                    <div className="text-blue-300">Speed -2</div>
+                    <div className="text-xs text-blue-400">Difficult marching</div>
+                  </div>
+                  <div className="bg-blue-800/30 rounded p-2">
+                    <strong className="text-blue-200">🔱 Pike:</strong>
+                    <div className="text-green-300">Attack +1, Defense +2</div>
+                    <div className="text-xs text-blue-400">Strong defensive formation</div>
+                  </div>
+                  <div className="bg-blue-800/30 rounded p-2">
+                    <strong className="text-blue-200">🏹 Archer:</strong>
+                    <div className="text-red-300">Attack -1, Special -1</div>
+                    <div className="text-xs text-blue-400">Reduced effectiveness</div>
+                  </div>
+                  <div className="bg-blue-800/30 rounded p-2">
+                    <strong className="text-blue-200">🐎 Cavalry:</strong>
+                    <div className="text-red-300">Attack -1, Speed -3</div>
+                    <div className="text-xs text-blue-400">Nearly unusable</div>
+                  </div>
+                  <div className="bg-blue-800/30 rounded p-2">
+                    <strong className="text-blue-200">⭐ Elite:</strong>
+                    <div className="text-green-300">Attack +2</div>
+                    <div className="text-red-300">Defense -1</div>
+                    <div className="text-xs text-blue-400">Veterans adapt</div>
+                  </div>
+                  <div className="bg-blue-800/30 rounded p-2">
+                    <strong className="text-blue-200">🏴 Support:</strong>
+                    <div className="text-green-300">Defense +1, Special +1</div>
+                    <div className="text-xs text-blue-400">More needed</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Summer */}
+              <div className="bg-yellow-900/40 border border-yellow-500 rounded-lg p-4">
+                <h4 className="font-semibold text-yellow-200 mb-3 flex items-center gap-2">
+                  ☀️ Summer (Even Positions) - Warm, dry, fast-paced combat
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                  <div className="bg-yellow-800/30 rounded p-2">
+                    <strong className="text-yellow-200">🪖 Infantry:</strong>
+                    <div className="text-green-300">Speed +1</div>
+                    <div className="text-xs text-yellow-400">Better mobility</div>
+                  </div>
+                  <div className="bg-yellow-800/30 rounded p-2">
+                    <strong className="text-yellow-200">🔱 Pike:</strong>
+                    <div className="text-green-300">Attack +3</div>
+                    <div className="text-xs text-yellow-400">Enhanced formation</div>
+                  </div>
+                  <div className="bg-yellow-800/30 rounded p-2">
+                    <strong className="text-yellow-200">🏹 Archer:</strong>
+                    <div className="text-green-300">Attack +3, Special +1</div>
+                    <div className="text-xs text-yellow-400">Ideal conditions</div>
+                  </div>
+                  <div className="bg-yellow-800/30 rounded p-2">
+                    <strong className="text-yellow-200">🐎 Cavalry:</strong>
+                    <div className="text-green-300">Attack +1, Speed +2</div>
+                    <div className="text-xs text-yellow-400">Perfect for charges</div>
+                  </div>
+                  <div className="bg-yellow-800/30 rounded p-2">
+                    <strong className="text-yellow-200">⭐ Elite:</strong>
+                    <div className="text-green-300">All stats +1</div>
+                    <div className="text-xs text-yellow-400">Peak performance</div>
+                  </div>
+                  <div className="bg-yellow-800/30 rounded p-2">
+                    <strong className="text-yellow-200">🏴 Support:</strong>
+                    <div className="text-red-300">Special -1</div>
+                    <div className="text-xs text-yellow-400">Less critical</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Autumn */}
+              <div className="bg-orange-900/40 border border-orange-500 rounded-lg p-4">
+                <h4 className="font-semibold text-orange-200 mb-3 flex items-center gap-2">
+                  🍂 Autumn (Prime Positions) - Muddy, shifting terrain
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                  <div className="bg-orange-800/30 rounded p-2">
+                    <strong className="text-orange-200">🪖 Infantry:</strong>
+                    <div className="text-green-300">Defense +1</div>
+                    <div className="text-xs text-orange-400">Steady in mud</div>
+                  </div>
+                  <div className="bg-orange-800/30 rounded p-2">
+                    <strong className="text-orange-200">🔱 Pike:</strong>
+                    <div className="text-red-300">Speed -1</div>
+                    <div className="text-xs text-orange-400">Slower formation</div>
+                  </div>
+                  <div className="bg-orange-800/30 rounded p-2">
+                    <strong className="text-orange-200">🏹 Archer:</strong>
+                    <div className="text-green-300">Attack +1</div>
+                    <div className="text-xs text-orange-400">Good visibility</div>
+                  </div>
+                  <div className="bg-orange-800/30 rounded p-2">
+                    <strong className="text-orange-200">🐎 Cavalry:</strong>
+                    <div className="text-red-300">Attack -1, Speed -2</div>
+                    <div className="text-xs text-orange-400">Slippery terrain</div>
+                  </div>
+                  <div className="bg-orange-800/30 rounded p-2">
+                    <strong className="text-orange-200">⭐ Elite:</strong>
+                    <div className="text-green-300">Special +2</div>
+                    <div className="text-xs text-orange-400">Strategic advantage</div>
+                  </div>
+                  <div className="bg-orange-800/30 rounded p-2">
+                    <strong className="text-orange-200">🏴 Support:</strong>
+                    <div className="text-green-300">Speed +1</div>
+                    <div className="text-xs text-orange-400">Better positioning</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-amber-700/40 border border-amber-500 rounded-lg p-4 mt-4">
+                <h4 className="font-semibold text-amber-100 mb-2">📝 Seasonal Notes:</h4>
+                <ul className="text-sm text-amber-200 space-y-1">
+                  <li>• Seasonal effects are automatically applied based on position type</li>
+                  <li>• Winter (Odd positions): Favors defensive play and Pike formations</li>
+                  <li>• Summer (Even positions): Ideal for aggressive tactics and Cavalry charges</li>
+                  <li>• Autumn (Prime positions): Requires tactical adaptation and Elite units shine</li>
+                  <li>• Plan your deployments around seasonal advantages!</li>
+                </ul>
+              </div>
             </div>
           )}
 
@@ -194,6 +376,8 @@ const GameRulesModal = ({ isOpen, onClose }) => {
                     <li>• Deploying outside your zone</li>
                     <li>• Using eliminated units</li>
                     <li>• Moving through occupied positions (Cavalry)</li>
+                    <li>• <strong>Crossing borders through invalid positions</strong></li>
+                    <li>• Ignoring seasonal stat penalties/bonuses</li>
                   </ul>
                 </div>
               </div>
