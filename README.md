@@ -1,6 +1,6 @@
 # 🌲 Ashwood - Tactical Battlefield Strategy Game
 
-**A blockchain-based tactical strategy game built on Starknet using the Dojo framework**
+**A fully onchain tactical strategy game built on Dojo framework**
 
 Ashwood combines tactical unit positioning, seasonal warfare mechanics, and supply chain logistics in an immersive 54-position battlefield system. Players deploy armies, manage resources, and engage in strategic combat across multiple interconnected 3x3 grids.
 
@@ -16,7 +16,23 @@ Players command armies of diverse unit types across a 54-position battlefield di
 - **Seasonal Combat System** with dynamic stat modifications
 - **Supply Chain Mechanics** requiring tactical positioning
 - **Turn-Based Strategy** with deployment and engagement phases
-- **Blockchain Persistence** via Starknet smart contracts
+- **Fully Onchain** built on Dojo framework
+- **NFT Competition** - 72 unique units minted as NFTs
+
+---
+
+## 🏆 Competition System
+
+### Battle Competition
+- **72 Unique Units** - Each unit is minted as an NFT
+- **120 Round Battles** - Players compete for high scores over 120 rounds
+- **Winner Takes All** - Highest scoring player claims ownership of the unit being competed for
+- **Strategic Choice** - Players can choose which unit to battle for
+
+### How to Win
+- Score the highest points after 120 rounds of tactical combat
+- Claim ownership of the NFT unit you competed for
+- Build your collection through strategic victories
 
 ---
 
@@ -137,54 +153,6 @@ Players command armies of diverse unit types across a 54-position battlefield di
 
 ---
 
-## 📋 Smart Contract Architecture
-
-### Core Models
-
-#### BattleField
-```cairo
-pub struct BattleField {
-    pub match_id: u128,
-    pub defender_commander_id: ContractAddress,
-    pub invader_player_id: ContractAddress,
-    pub defender_army_id: u8,
-    pub invader_army_id: u8,
-    pub status: BattleStatus,
-    pub current_turn: u8,
-    // ... additional fields
-}
-```
-
-#### Unit
-```cairo
-pub struct Unit {
-    pub id: u128,
-    pub player_name: felt252,
-    pub unit_class: UnitClass,
-    pub attack: u8,
-    pub defense: u8,
-    pub speed: u8,
-    pub special: u8,
-}
-```
-
-#### Army
-```cairo
-pub struct Army {
-    pub commander_id: ContractAddress,
-    pub army_id: u8,
-    pub name: felt252,
-}
-```
-
-### Contract System
-- **BattleField Contract**: Core battle management
-- **Army Contract**: Unit organization and deployment
-- **Unit Contract**: Individual unit management
-- **Actions Contract**: Movement, combat, and special abilities
-
----
-
 ## 🎯 Gameplay Flow
 
 ### 1. Pre-Battle Setup
@@ -203,6 +171,7 @@ pub struct Army {
 - Adapt to seasonal effects and terrain
 
 ### 4. Victory Conditions
+- Score the highest points after 120 rounds
 - Eliminate enemy forces
 - Control strategic positions
 - Force enemy retreat
@@ -211,10 +180,10 @@ pub struct Army {
 
 ## 🛠️ Technical Stack
 
-- **Blockchain**: Starknet
-- **Framework**: Dojo
+- **Framework**: Dojo (Fully Onchain)
 - **Language**: Cairo
 - **Architecture**: Entity Component System (ECS)
+- **Frontend**: React/TypeScript
 
 ### Key Features
 - **Gas Optimized**: Efficient position validation and movement
@@ -226,37 +195,22 @@ pub struct Army {
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Starknet development environment
-- Dojo framework installed
-- Cairo compiler
+### Play Live
+🎮 **Live Game**: [https://ashwood.vercel.app/](https://ashwood.vercel.app/)
 
-### Installation
+### Local Development
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/ashwood
-
-# Install dependencies
+git clone https://github.com/Kagwep/ashwood.git
 cd ashwood
-dojo build
 
-# Deploy to local testnet
-dojo migrate
-```
+# Deploy client
+cd client
+npm run dev
 
-### Basic Usage
-```cairo
-// Create a new battle
-let battle_id = create_battle(defender_address, attacker_address, army_ids);
-
-// Deploy units
-deploy_unit(battle_id, army_id, unit_id, position, season);
-
-// Execute moves
-move_unit(battle_id, army_id, unit_id, from_position, to_position);
-
-// Engage in combat
-attack_unit(battle_id, attacker_army_id, attacker_unit_id, target_unit_id);
+# Deploy contracts on Katana (in separate terminal)
+cd contracts/ashwood
+# Follow Dojo deployment instructions
 ```
 
 ---
@@ -277,6 +231,11 @@ attack_unit(battle_id, attacker_army_id, attacker_unit_id, target_unit_id);
 - **Winter**: Focus on Pike and Support units
 - **Summer**: Leverage Archer and Cavalry advantages
 - **Autumn**: Elite units gain strategic value
+
+### NFT Competition Strategy
+- **Choose Wisely**: Select units you want to own
+- **Long-term Thinking**: Plan for 120-round campaigns
+- **Risk Management**: Balance aggressive plays with consistency
 
 ---
 
@@ -300,10 +259,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- **Documentation**: [docs.ashwood.game](https://docs.ashwood.game)
+- **Live Game**: [https://ashwood.vercel.app/](https://ashwood.vercel.app/)
+- **Repository**: [https://github.com/Kagwep/ashwood.git](https://github.com/Kagwep/ashwood.git)
+<!-- - **Documentation**: [docs.ashwood.game](https://docs.ashwood.game)
 - **Discord**: [Join our community](https://discord.gg/ashwood)
-- **Twitter**: [@AshwoodGame](https://twitter.com/AshwoodGame)
+- **Twitter**: [@AshwoodGame](https://twitter.com/AshwoodGame) -->
 
 ---
 
-**Built with ⚔️ for tactical strategy enthusiasts and blockchain gamers**
+**Built with ⚔️ for tactical strategy enthusiasts and onchain gamers**

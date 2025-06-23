@@ -315,6 +315,7 @@ const battlefields = useMemo((): GridPosition[][] => {
               );
         
       if (result && result.transaction_hash) {
+        console.log(result,result.transaction_hash);
         toast.success(`Unit ${unit.player_name} moved to position ${toPosition + 1}`);
       }
       
