@@ -9,6 +9,8 @@ import { useGameStore } from '../utils/ashwoodStore';
 import { removeLeadingZeros } from '../utils/sanitizer';
 import type { BattleField, Unit } from '../dojogen/models.gen';
 import { getSeason, parseStarknetError } from '../utils';
+import { Info } from 'lucide-react';
+import GameRulesModal from '../components/GameRulesModal';
 
 // Types
 interface GridPosition {
@@ -77,6 +79,7 @@ const BattleInterface: React.FC = () => {
   // Stores
   const { battle_id, army_id } = useAshwoodStore();
   const { state, refetch } = useAllEntities();
+  const [showRulesModal, setShowRulesModal] = useState(false);
   
   // Game store data
   const {
@@ -315,7 +318,7 @@ const battlefields = useMemo((): GridPosition[][] => {
               );
         
       if (result && result.transaction_hash) {
-        console.log(result,result.transaction_hash);
+        //console.log(result,result.transaction_hash);
         toast.success(`Unit ${unit.player_name} moved to position ${toPosition + 1}`);
       }
       
@@ -795,11 +798,23 @@ const battlefields = useMemo((): GridPosition[][] => {
                   </div>
                   )}
                 </div>
+                <button
+                onClick={() => setShowRulesModal(true)}
+                className="px-3 py-1 bg-amber-800/80 border border-amber-600 rounded-lg 
+                          font-medium text-amber-100 text-sm hover:bg-amber-700/80 
+                          hover:scale-105 transition-all duration-200 flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                Game Rules
+              </button>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <GameRulesModal 
+        isOpen={showRulesModal} 
+        onClose={() => setShowRulesModal(false)} 
+      />
     </div>
   );
 };
